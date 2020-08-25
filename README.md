@@ -30,7 +30,7 @@ _For more examples and usage, please refer to the [Wiki][wiki]._
 
 * 0.0.1
     * Work in progress
-    * Continuous Improvment
+    * Continuous Improvement
 
 ## Meta
 
