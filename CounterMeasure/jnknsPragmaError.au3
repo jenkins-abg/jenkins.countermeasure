@@ -19,28 +19,29 @@
 #include "..\TraceLog\jnknsProcessLogger.au3"
 
 Local	$sLogTextFile = @ScriptDir & '\..\Log.txt', _
-			$sTestSheetFile, _
-			$sTprjPath, _
-			$sSpider_Ver, _
-			$sStatus, _
-			$sSpider_Run_Class = "テスト実行中", _
-			$sSpider_Local, _
-            $sUnitTest_Log_TxtFile, _
-            $sSpider_Log_TxtFile, _
-            $sSoftwarePath = "", _
-            $openingPragma, _
-            $closingPragma, _
-            $pragmaCounter
+		$sTestSheetFile, _
+		$sTprjPath, _
+		$sSpider_Ver, _
+		$sStatus, _
+		$sSpider_Run_Class = "テスト実行中", _
+		$sSpider_Local, _
+        $sUnitTest_Log_TxtFile, _
+        $sSpider_Log_TxtFile, _
+        $sSoftwarePath = "", _
+        $openingPragma, _
+        $closingPragma, _
+        $pragmaCounter
 Local	$hTextFile
-Local    $aArrayA, _
-            $aArrayB, _
-            $aArrayC, _
-            $aArrayD[11], _
-            $aTarget_Source
+Local   $aArrayA, _
+        $aArrayB, _
+        $aArrayC, _
+        $aArrayD[11], _
+        $aTarget_Source
 Local   $iPragma_Count, _
-            $iLine_Count[10], _
-            $iFunction_Definition_Count
+        $iLine_Count[10], _
+        $iFunction_Definition_Count
 Local   $bDone
+Local   $sLineStringEdited = ""
 Local   $sCount_txtfile = @ScriptDir & '\..\TraceLog\2.txt'
 Global  $g_JPL_txtfile = @ScriptDir & '\..\TraceLog\jenkins-trace-log.txt'
 
@@ -86,8 +87,8 @@ $bDone = False
 $aArrayB = FileReadToArray($aArrayA[1])
 Local $iLineCountA = @extended
 If @error Then
-     _JPL_jnknsCreatelogfile('Pragma Error', "", 'Error: There was an error reading the file', 'No', 'Failed')
-     Exit
+    _JPL_jnknsCreatelogfile('Pragma Error', "", 'Error: There was an error reading the file', 'No', 'Failed')
+    Exit
 Else
     For $i = 1 To $iLineCountA -1
         If StringInStr ($aArrayB[$i], '#pragma') Then
@@ -96,7 +97,7 @@ Else
     Next
 EndIf
 
- ; Condition if Pragma is found
+; Condition if Pragma is found
 If $iPragma_Count > 0 Then
     ; start logging of countermeasure
     _JPL_jnknsCreatelogfile('Pragma Error', $sTestSheetFile, 'Test : Editing definition', 'Yes', "start")
@@ -128,6 +129,8 @@ If $iPragma_Count > 0 Then
                     _FileWriteToLine($aArrayA[1], $iLine_Count[$x+1] +1, '/* ' & $aArrayB[$iLine_Count[$x + 1]]& ' */', 1)
                     $openingPragma = $iLine_Count[$x] + 1
                     $closingPragma = $iLine_Count[$x+1] +1
+                    sLineStringEdited = sLineStringEdited & "Edited line code number: " & $iLine_Count[$x] + 1 & "\n" & _
+                                        "Edited line code number: " & $iLine_Count[$x+1] +1 & "\n"
                 EndIf
             EndIf
             $iFunction_Definition_Count = 0
@@ -138,20 +141,20 @@ If $iPragma_Count > 0 Then
     $aArrayB = FileReadToArray($aArrayA[1])
     $iLineCountA = @extended
     ; Loop if there more pragmas in the opening
-   $pragmaCounter = ((UBound($iLine_Count) -1 ) /2 ) - 1
+    $pragmaCounter = ((UBound($iLine_Count) -1 ) /2 ) - 1
     For $x = $openingPragma To 1 Step -1
         ; loop for checking in-between of two consecutive pragmas
-        ;If $iLine_Count[$x] <> "" Then
-                ; Checking preceding pragmas
-                If ( StringInStr($aArrayB[$x], '#pragma') ) Then
-                    If StringInStr($aArrayB[$x], '/*') Then
-                    Else
-                        If ( $pragmaCounter <> 0 ) Then
-                           _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
-                            $pragmaCounter = $pragmaCounter -1
-                        EndIf
-                     EndIf
+        ; Checking preceding pragmas
+        If ( StringInStr($aArrayB[$x], '#pragma') ) Then
+            If StringInStr($aArrayB[$x], '/*') Then
+            Else
+                If ( $pragmaCounter <> 0 ) Then
+                    _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
+                    $pragmaCounter = $pragmaCounter -1
+                    sLineStringEdited = sLineStringEdited & "Edited line code number: " & $x+1 & "\n"
                 EndIf
+            EndIf
+        EndIf
         Sleep(100)
     Next
     Sleep(1000)
@@ -161,29 +164,31 @@ If $iPragma_Count > 0 Then
     $pragmaCounter = ((UBound($iLine_Count) -1 ) /2 ) - 1
     For $x = $closingPragma To $iLineCountA -1
         ; loop for checking in-between of two consecutive pragmas
-                If ( StringInStr($aArrayB[$x], '#pragma') ) Then
-                    If StringInStr($aArrayB[$x], '/*') Then
-                    Else
-                        If ( $pragmaCounter <> 0 ) Then
-                           _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
-                            $pragmaCounter = $pragmaCounter -1
-                        EndIf
-                     EndIf
+        If ( StringInStr($aArrayB[$x], '#pragma') ) Then
+            If StringInStr($aArrayB[$x], '/*') Then
+            Else
+                If ( $pragmaCounter <> 0 ) Then
+                    _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
+                    $pragmaCounter = $pragmaCounter -1
+                    sLineStringEdited = sLineStringEdited & "Edited line code number: " & $x+1 & "\n"
                 EndIf
+            EndIf
+        EndIf
         Sleep(100)
     Next
     Sleep(1000)
-     _JPL_jnknsCreatelogfile('Pragma Error', '', 'Test : Editing definition', 'Yes', "= Passed")
+    _JPL_jnknsCreatelogfile('Pragma Error', '', 'Test : Editing definition', '', "")
+    _JPL_jnknsCreatelogfile('Pragma Error', '', sLineStringEdited, 'Yes', "= Passed")
     $bDone = True
 EndIf
 
 If $bDone Then
     ; Create text file
-   Local $hFileOpen = FileOpen($sCount_txtfile, 2)
+    Local $hFileOpen = FileOpen($sCount_txtfile, 2)
         If $hFileOpen = -1 Then
             Exit
         EndIf
-    FileWriteLine($hFileOpen,"Pragma countermeasure applied")
+    FileWriteLine($hFileOpen,"Pragma countermeasure applied" & "\n" & sLineStringEdited)
 #cs ========================================================
     This was commented out since this is a pre-run countermeasure
     This will be run together after applying/checking the 3 pre-run countermeasures
