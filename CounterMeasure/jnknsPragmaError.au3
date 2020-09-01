@@ -129,8 +129,8 @@ If $iPragma_Count > 0 Then
                     _FileWriteToLine($aArrayA[1], $iLine_Count[$x+1] +1, '/* ' & $aArrayB[$iLine_Count[$x + 1]]& ' */', 1)
                     $openingPragma = $iLine_Count[$x] + 1
                     $closingPragma = $iLine_Count[$x+1] +1
-                    sLineStringEdited = sLineStringEdited & "Edited line code number: " & $iLine_Count[$x] + 1 & "\n" & _
-                                        "Edited line code number: " & $iLine_Count[$x+1] +1 & "\n"
+                    $sLineStringEdited = $sLineStringEdited & "Edited line code number: " & $iLine_Count[$x] + 1 & @CRLF & _
+                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $iLine_Count[$x+1] +1 & @CRLF
                 EndIf
             EndIf
             $iFunction_Definition_Count = 0
@@ -151,7 +151,8 @@ If $iPragma_Count > 0 Then
                 If ( $pragmaCounter <> 0 ) Then
                     _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
                     $pragmaCounter = $pragmaCounter -1
-                    sLineStringEdited = sLineStringEdited & "Edited line code number: " & $x+1 & "\n"
+                    $sLineStringEdited = $sLineStringEdited & _
+                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $x+1 & @CRLF
                 EndIf
             EndIf
         EndIf
@@ -170,15 +171,17 @@ If $iPragma_Count > 0 Then
                 If ( $pragmaCounter <> 0 ) Then
                     _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
                     $pragmaCounter = $pragmaCounter -1
-                    sLineStringEdited = sLineStringEdited & "Edited line code number: " & $x+1 & "\n"
+                    $sLineStringEdited = $sLineStringEdited & _
+                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $x+1 & @CRLF
                 EndIf
             EndIf
         EndIf
         Sleep(100)
     Next
+
     Sleep(1000)
     _JPL_jnknsCreatelogfile('Pragma Error', '', 'Test : Editing definition', 'Yes', "= Passed")
-    _JPL_jnknsCreatelogfile('Pragma Error', '', sLineStringEdited, '', "")
+    _JPL_jnknsCreatelogfile('Pragma Error', '', $sLineStringEdited,'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
     $bDone = True
 EndIf
 
@@ -188,7 +191,7 @@ If $bDone Then
         If $hFileOpen = -1 Then
             Exit
         EndIf
-    FileWriteLine($hFileOpen,"Pragma countermeasure applied" & "\n" & sLineStringEdited)
+    FileWriteLine($hFileOpen,"Pragma countermeasure applied")
 #cs ========================================================
     This was commented out since this is a pre-run countermeasure
     This will be run together after applying/checking the 3 pre-run countermeasures
