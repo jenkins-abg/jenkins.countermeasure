@@ -89,7 +89,7 @@ Func _JMI_jnksEnvironmentLog()
         EndIf
         $ret = 0
     Else
-         _JMI_jnknsSpiderSettings($g_sJMI_Spider_Version)
+        _JMI_jnknsSpiderSettings($g_sJMI_Spider_Version)
         $ret = 1
     EndIf
     Return $ret
@@ -213,7 +213,7 @@ Func _JMI_jnknsCallDSpider()
 			EndIf
 		EndIf
 		; Wait until D-Spider Opens
-		 WinWaitActive($g_sJMI_Spider_Latest_Title,"","")
+		WinWaitActive($g_sJMI_Spider_Latest_Title,"","")
 	endif
 	; Checks if Window exists
 	if WinExists($g_sJMI_Spider_Latest_Title) Then

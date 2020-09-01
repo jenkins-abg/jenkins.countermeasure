@@ -19,10 +19,10 @@
 Global  $g_JPL_txtfile = @ScriptDir & '\TraceLog\jenkins-trace-log.txt'
 Global Enum $HAN_GUI, $HAN_TREE, $HAN_BTN, $HAN_BTN2, $HAN_COUNT
 Global		$g_iJM_Handles[$HAN_COUNT], _
-				$g_iJM_Spider_F5_Class , _							;	Class value depending in the AutoIt v3 Window info
-				$g_iJM_Spider_File_Class, _							;	Class value depending in the AutoIt v3 Window info
-				$g_iJM_Spider_Software_Path_Class , _		;	Class value depending in the AutoIt v3 Window info
-				$g_iJM_Spider_Run_Class							;	Class value depending in the AutoIt v3 Window info
+			$g_iJM_Spider_F5_Class , _							;	Class value depending in the AutoIt v3 Window info
+			$g_iJM_Spider_File_Class, _							;	Class value depending in the AutoIt v3 Window info
+			$g_iJM_Spider_Software_Path_Class , _		;	Class value depending in the AutoIt v3 Window info
+			$g_iJM_Spider_Run_Class							;	Class value depending in the AutoIt v3 Window info
 
 Local	$sRetShowForm, _
 			$sTextClasses, _
@@ -59,8 +59,8 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
         Sleep(100)
     Next
     If $iFileCounter > 0 Then
-         ;$retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
-         $retBuild =  1
+        ;$retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
+        $retBuild =  1
     EndIf
     _JEH_RefreshSettings($sSoftwarePath & '\')
     If $initStatus = 1 Then

@@ -33,17 +33,17 @@ Global Const    $STD_INPUT_HANDLE = -10
 Global Const    $STD_OUTPUT_HANDLE = -11
 Global Const    $STD_ERROR_HANDLE = -12
 Global Const    $_CONSOLE_SCREEN_BUFFER_INFO = _
-                         "short dwSizeX;" & _
-                         "short dwSizeY;" & _
-                         "short dwCursorPositionX;" & _
-                         "short dwCursorPositionY;" & _
-                         "short wAttributes;" & _
-                         "short Left;" & _
-                         "short Top;" & _
-                         "short Right;" & _
-                         "short Bottom;" & _
-                         "short dwMaximumWindowSizeX;" & _
-                         "short dwMaximumWindowSizeY"
+                        "short dwSizeX;" & _
+                        "short dwSizeY;" & _
+                        "short dwCursorPositionX;" & _
+                        "short dwCursorPositionY;" & _
+                        "short wAttributes;" & _
+                        "short Left;" & _
+                        "short Top;" & _
+                        "short Right;" & _
+                        "short Bottom;" & _
+                        "short dwMaximumWindowSizeX;" & _
+                        "short dwMaximumWindowSizeY"
 ; ====================================================================﻿================================================
 
 ; #CURRENT# ============================================================================================================

@@ -36,14 +36,14 @@ Global  $g_JPL_txtfile   ;Text File Location
 ;=====================================================================================================================
 Func _JPL_jnknsCreatelogfile($sCounterMeasure, $sFileName, $sEvent, $isPassed, $sStatus)
     Local   $runDate, _
-                $runTime, _
-                $sFileNameCheck = '', _
-                $aTxtFileContent, _
-                $iLineCountA, _
-                $sInitPassed
+            $runTime, _
+            $sFileNameCheck = '', _
+            $aTxtFileContent, _
+            $iLineCountA, _
+            $sInitPassed
     ; Initialize Variables
-    $runTime=_DateTimeFormat(_NowTime(), 5)
-    $runDate=_NowDate()
+    $runTime = _DateTimeFormat(_NowTime(), 5)
+    $runDate = _NowDate()
     $sInitPassed = 'No'
 
     $aTxtFileContent = FileReadToArray($g_JPL_txtfile)

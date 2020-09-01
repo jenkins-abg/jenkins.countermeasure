@@ -31,30 +31,27 @@ Global $g_iJM_getWin
 Global $g_JPE_errlogtxt
 ; ====================================================================================================================
 
-
-
-
 ; #GLOBAL VARIABLES#	=====================================================================================================
 Global              $g_sJEH_FixValue
 Global              $g_iJEH_FormClose, _
-                        $g_iJEH_PLError_Check
+                    $g_iJEH_PLError_Check
 Global Const    $STD_INPUT_HANDLE = -10
 Global Const    $STD_OUTPUT_HANDLE = -11
 Global Const    $STD_ERROR_HANDLE = -12
 Global Const    $_CONSOLE_SCREEN_BUFFER_INFO = _
-                         "short dwSizeX;" & _
-                         "short dwSizeY;" & _
-                         "short dwCursorPositionX;" & _
-                         "short dwCursorPositionY;" & _
-                         "short wAttributes;" & _
-                         "short Left;" & _
-                         "short Top;" & _
-                         "short Right;" & _
-                         "short Bottom;" & _
-                         "short dwMaximumWindowSizeX;" & _
-                         "short dwMaximumWindowSizeY"
-Global               $TRUE=1 , _
-                         $FALSE= 0
+                        "short dwSizeX;" & _
+                        "short dwSizeY;" & _
+                        "short dwCursorPositionX;" & _
+                        "short dwCursorPositionY;" & _
+                        "short wAttributes;" & _
+                        "short Left;" & _
+                        "short Top;" & _
+                        "short Right;" & _
+                        "short Bottom;" & _
+                        "short dwMaximumWindowSizeX;" & _
+                        "short dwMaximumWindowSizeY"
+Global	$TRUE=1 , _
+        $FALSE= 0
 ; ====================================================================﻿================================================
 
 
@@ -86,17 +83,17 @@ Global		$g_iJM_Handles[$HAN_COUNT], _
 ; #CONSTANT VARIABLES# =====================================================================================================
 
 
-             Global Const $_SMALL_RECT = _
-             "short Left;" & _
-             "short Top;" & _
-             "short Right;" & _
-             "short Bottom"
-             Global Const $_COORD = _
-             "short X;" & _
-             "short Y"
-            Global Const $_CHAR_INFO = _
-             "wchar UnicodeChar;" & _
-             "short Attributes"
+Global Const $_SMALL_RECT = _
+            "short Left;" & _
+            "short Top;" & _
+            "short Right;" & _
+            "short Bottom"
+Global Const $_COORD = _
+            "short X;" & _
+            "short Y"
+Global Const $_CHAR_INFO = _
+            "wchar UnicodeChar;" & _
+            "short Attributes"
 
 ; ====================================================================================================================
 ; #GLOBAL VARIABLES# =====================================================================================================
@@ -235,11 +232,11 @@ Func _JEH_RefreshSettings($sSoftwarePath)
     ; Check again the test sheet
     WinActivate($g_sJMI_Spider_Version)
     ;ControlSend($g_sJMI_Spider_Version,"","[NAME:lvwFileList]"," ")
-  ControlClick($g_sJMI_Spider_Version,"","[NAME:lvwFileList]")
+	ControlClick($g_sJMI_Spider_Version,"","[NAME:lvwFileList]")
 
     ; Save changes
     Send("^s")
-  ControlSend($g_sJMI_Spider_Version, "", "[NAME:lvwFileList]", "{space}")
+	ControlSend($g_sJMI_Spider_Version, "", "[NAME:lvwFileList]", "{space}")
 EndFunc		; ==>_JEH_RefreshSettings
 
 ; #INTERNAL_USE_ONLY#====================================================================================================
@@ -329,9 +326,6 @@ Func _JMI_jnknsBuildTree(Const ByRef $TextClasses)
 	Return 1
 EndFunc		 ;==>_JMI_jnknsBuildTree
 
-
-
-
 ; #FUNCTION# =========================================================================================================
 ; Name					:	_JMI_jnknsWinGetClassesByText
 ; Description		:	Gets class in reference with the window being selected
@@ -410,7 +404,7 @@ Func _JMI_jnknsCallDSpider()
 			EndIf
 		EndIf
 		; Wait until D-Spider Opens
-		 WinWaitActive($g_sJMI_Spider_Latest_Title,"","")
+		WinWaitActive($g_sJMI_Spider_Latest_Title,"","")
 	endif
 	; Checks if Window exists
 	if WinExists($g_sJMI_Spider_Latest_Title) Then
