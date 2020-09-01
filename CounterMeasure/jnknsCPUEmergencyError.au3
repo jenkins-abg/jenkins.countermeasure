@@ -37,7 +37,7 @@ Local    $aArrayA, _
             $aTarget_Source
 Local   $iCPU_Count
 Local   $bDone
-
+Local   $sLineStringEdited = ""
 Local   $sCount_txtfile = @ScriptDir & '\..\TraceLog\1.txt'
 ;   queue file text path
 Local   $sQuePath = ""
@@ -95,11 +95,13 @@ Else
         EndIf
     Next
 EndIf
+
 ; Condition if CPU EMERGENCY is found
 If $iCPU_Count > 0 Then
     ; start logging of countermeasure
     _JPL_jnknsCreatelogfile('CPU_Emergency', $sTestSheetFile, 'Test : Editing definition', 'Yes', "start")
     $aArrayC = _JEH_FindInFile('CPU_EMERGENCY', $sSoftwarePath, '*.h')  ; Search definition file of CPU_Emergency
+
     ; Loop for any declaration found
     For $i = 1 To $aArrayC[0]
         $aArrayB = FileReadToArray($aArrayC[$i])    ;  Array to store all lines in the file found
@@ -114,11 +116,13 @@ If $iCPU_Count > 0 Then
                 ReDim $aArrayB[$iLineCountB]
                 If StringInStr ($aArrayB[$j], 'CPU_EMERGENCY') And StringInStr ($aArrayB[$j], 'define') Then
                     For $k = ($j +10)  To $j Step - 1
-                         If StringInStr ($aArrayB[$k], 'do') Or  (StringInStr ($aArrayB[$k], 'while') And StringInStr ($aArrayB[$k], '0')) Or StringInStr ($aArrayB[$k], 'define') Then
-                         Else
+                        If StringInStr ($aArrayB[$k], 'do') Or  (StringInStr ($aArrayB[$k], 'while') And StringInStr ($aArrayB[$k], '0')) Or StringInStr ($aArrayB[$k], 'define') Then
+                        Else
                             If $aArrayB[$k] <> ""  Then
                                 Sleep(200)
                                 $aArrayD[$x] = $k   ; Assign line number to arrays to be deleted
+                                $sLineStringEdited = $sLineStringEdited & "Deleted line code number @ " & $aArrayC[$i] & ": " & $k & @CRLF & _
+                                @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB
                                 $x = $x + 1
                             EndIf
                         EndIf
@@ -140,6 +144,7 @@ If $iCPU_Count > 0 Then
     Sleep(1000)
     $bDone = True
     _JPL_jnknsCreatelogfile('CPU_Emergency Error', "", 'Test : Editing definition', 'Yes', "= Passed")
+    _JPL_jnknsCreatelogfile('CPU_Emergency Error', '', $sLineStringEdited,'Yes', "STATUS : OK")
 EndIf
 
 If $bDone Then

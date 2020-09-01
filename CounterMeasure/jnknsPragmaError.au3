@@ -181,7 +181,7 @@ If $iPragma_Count > 0 Then
 
     Sleep(1000)
     _JPL_jnknsCreatelogfile('Pragma Error', '', 'Test : Editing definition', 'Yes', "= Passed")
-    _JPL_jnknsCreatelogfile('Pragma Error', '', $sLineStringEdited,'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+    _JPL_jnknsCreatelogfile('Pragma Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
     $bDone = True
 EndIf
 
