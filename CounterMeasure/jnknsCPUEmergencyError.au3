@@ -121,7 +121,7 @@ If $iCPU_Count > 0 Then
                             If $aArrayB[$k] <> ""  Then
                                 Sleep(200)
                                 $aArrayD[$x] = $k   ; Assign line number to arrays to be deleted
-                                $sLineStringEdited = $sLineStringEdited & "Deleted line code number @ " & $aArrayC[$i] & ": " & $k & @CRLF & _
+                                $sLineStringEdited = $sLineStringEdited & "Deleted line code number: " & $k & " in "  & $aArrayC[$i] & @CRLF & _
                                 @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB
                                 $x = $x + 1
                             EndIf

@@ -129,8 +129,8 @@ If $iPragma_Count > 0 Then
                     _FileWriteToLine($aArrayA[1], $iLine_Count[$x+1] +1, '/* ' & $aArrayB[$iLine_Count[$x + 1]]& ' */', 1)
                     $openingPragma = $iLine_Count[$x] + 1
                     $closingPragma = $iLine_Count[$x+1] +1
-                    $sLineStringEdited = $sLineStringEdited & "Edited line code number: " & $iLine_Count[$x] + 1 & @CRLF & _
-                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $iLine_Count[$x+1] +1 & @CRLF
+                    $sLineStringEdited = $sLineStringEdited & "Edited line code number: " & $iLine_Count[$x] + 1 & " in " & $aArrayA[1]  & @CRLF & _
+                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $iLine_Count[$x+1] +1 & " in " & $aArrayA[1] & @CRLF
                 EndIf
             EndIf
             $iFunction_Definition_Count = 0
@@ -152,7 +152,7 @@ If $iPragma_Count > 0 Then
                     _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
                     $pragmaCounter = $pragmaCounter -1
                     $sLineStringEdited = $sLineStringEdited & _
-                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $x+1 & @CRLF
+                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $x+1 & " in " & $aArrayA[1] & @CRLF
                 EndIf
             EndIf
         EndIf
@@ -172,7 +172,7 @@ If $iPragma_Count > 0 Then
                     _FileWriteToLine($aArrayA[1], $x+1, '/* ' & $aArrayB[$x]& ' */', 1)
                     $pragmaCounter = $pragmaCounter -1
                     $sLineStringEdited = $sLineStringEdited & _
-                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $x+1 & @CRLF
+                    @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "Edited line code number: " & $x+1 & " in " & $aArrayA[1] & @CRLF
                 EndIf
             EndIf
         EndIf
