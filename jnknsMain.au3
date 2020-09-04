@@ -34,6 +34,7 @@ Local   $iFileCounter
 
 Local   $sLogTextFile = @ScriptDir & '\Log.txt'
 Local   $aTextFiles[] = [@ScriptDir &"\TraceLog\1.txt", @ScriptDir &"\TraceLog\2.txt", @ScriptDir &"\TraceLog\3.txt"]
+
 ; Initialize FSUnit Title
 While 1
     If _JMI_jnknsCallDSpider() Then
@@ -51,6 +52,8 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
     $initStatus = _JMI_jnksEnvironmentLog()
     $sSoftwarePath = StringTrimRight($g_sJMI_TPRJ_Path, 21)
 	$spider_UnitLog_TxtFile = $sSoftwarePath & "\UnitTest\log.txt"
+
+    Sleep(100)
     ; Loop to check if pre-run countermeasures were applied
     For $i = 0 To UBound($aTextFiles) - 1
         If FileExists($aTextFiles[$i]) Then
@@ -59,8 +62,8 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
         Sleep(100)
     Next
     If $iFileCounter > 0 Then
-        ;$retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
-        $retBuild =  1
+        $retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
+        ;$retBuild =  1
     EndIf
     _JEH_RefreshSettings($sSoftwarePath & '\')
     If $initStatus = 1 Then
