@@ -68,7 +68,8 @@ Func _JPL_jnknsCreatelogfile($sCounterMeasure, $sFileName, $sEvent, $isPassed, $
     ; countermeasure applied logging
     If $iLineCountA > 0 And $sFileName = "" And $sStatus <> "End" And $sStatus = "= Passed" Then
         FileWriteLine( $g_JPL_txtfile,  $runDate & @TAB & $runTime & @TAB &  @TAB &"Information" & @TAB & @TAB & "Countermeasure: " & $sCounterMeasure )
-    else
+    elseIf $sInitPassed = 'No' Then
+	Else
         FileWriteLine( $g_JPL_txtfile,  $runDate & @TAB & $runTime & @TAB &  @TAB &"Information" & @TAB & @TAB & $sEvent  & " " & $sInitPassed )
     EndIf
     ; end of counter measure

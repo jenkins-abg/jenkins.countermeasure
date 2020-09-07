@@ -33,7 +33,7 @@ Local   $retBuild
 Local   $iFileCounter
 
 Local   $sLogTextFile = @ScriptDir & '\Log.txt'
-Local   $aTextFiles[] = [@ScriptDir &"\TraceLog\1.txt", @ScriptDir &"\TraceLog\2.txt", @ScriptDir &"\TraceLog\3.txt"]
+Local   $aTextFiles[] = [@ScriptDir &"\TraceLog\1.txt", @ScriptDir &"\TraceLog\2.txt", @ScriptDir &"\TraceLog\3.txt", @ScriptDir & "\TraceLog\jenkins-trace-log.txt"]
 Global $g_fileDeleter = 0
 
 ; Initialize FSUnit Title
