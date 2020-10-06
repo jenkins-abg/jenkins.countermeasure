@@ -451,6 +451,11 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
     Sleep(200)
     WinActivate('プロジェクト設定')     ; Title of the header window
+    if WinExists("[CLASS:プロジェクト設定]") Then
+        MsgBox(0,"","Found it")
+    Else
+        MsgBox(0,"","not found")
+    endif   
     $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
     If StringInStr($sTextClasses[7][1], @LF) Then
 			$sClassTrim = StringLeft($sTextClasses[7][1], StringInStr($sTextClasses[7][1], @LF) - 1)
