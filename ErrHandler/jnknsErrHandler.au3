@@ -436,7 +436,7 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	; Refresh tprj settings
     $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'
     ClipPut($sUnitTestTprjPath)
-    $hTestToolHandler = WinGetHandle(g_sJMI_Spider_Version)
+    $hTestToolHandler = WinGetHandle($g_sJMI_Spider_Version)
 
 	;Send("{ALT}")               ; Send Keys
 	;Send("{F}")
