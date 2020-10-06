@@ -196,7 +196,7 @@ Func _JMI_jnknsCallDSpider()
 	Local $hTestToolHandler
 	; Check if D-Spider Latest UnitTest Tool is already running
 	if ProcessExists("D-SPIDER.exe") Then
-		$hTestToolHandler = WinGetHandle(g_sJMI_Spider_Latest_Title)
+		$hTestToolHandler = WinGetHandle($g_sJMI_Spider_Latest_Title)
 		WinMenuSelectItem($hTestToolHandler,"","","")
 		;WinActivate($g_sJMI_Spider_Latest_Title,"")
 		;WinSetState($g_sJMI_Spider_Latest_Title,"",@SW_MAXIMIZE)
