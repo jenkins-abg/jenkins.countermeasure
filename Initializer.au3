@@ -131,6 +131,9 @@ Func _JEH_RefreshSettings($sSoftwarePath)
     Local   $hTab
     Local   $tIndex
     Local   $aTestSheetClass
+	Local	$hTestToolHandler
+
+	$hTestToolHandler = WinGetHandle($g_sJMI_Spider_Version)
 
     Sleep(200)
     ; Activate FSUnit window
@@ -152,21 +155,32 @@ Func _JEH_RefreshSettings($sSoftwarePath)
     Sleep(200)
 	; Refresh tprj settings
     $sUnitTestTprjPath = $sSoftwarePath & '\UnitTestProject.tprj'
-    ClipPut($sUnitTestTprjPath)
-	Send("{ALT}")               ; Send Keys
-	Send("{F}")
-	Send("{O}")
+	ClipPut($sUnitTestTprjPath)
+	
+	;Send("{ALT}")               ; Send Keys
+	;Send("{F}")
+	;Send("{O}")
+	ControlSend($hTestToolHandler, "", "{ALT}")
+	ControlSend($hTestToolHandler, "", "{F}")
+	ControlSend($hTestToolHandler, "", "{O}")
 	Sleep(1000)                 ; Wait for 1 second
-	Send("^v")                  ; Pastes the copied tprj path
-	Send("{ENTER}")
+	;Send("^v")                  ; Pastes the copied tprj path
+	;Send("{ENTER}")
+	ControlSend($hTestToolHandler, "", "^v")
+	ControlSend($hTestToolHandler, "", "{ENTER}")
     Sleep(200)
 
     ; Refresh header files in the パス Tab
-    Send("{ALT}")
-    Send("{E}")
-    Send("{RIGHT}")
-    Send("{DOWN}")
-    Send("{P}")
+    ;Send("{ALT}")
+    ;Send("{E}")
+    ;Send("{RIGHT}")
+    ;Send("{DOWN}")
+    ;Send("{P}")
+	ControlSend($hTestToolHandler, "", "{ALT}")
+	ControlSend($hTestToolHandler, "", "{E}")
+	ControlSend($hTestToolHandler, "", "{RIGHT}")
+	ControlSend($hTestToolHandler, "", "{DOWN}")
+	ControlSend($hTestToolHandler, "", "{P}")
 
     Sleep(200)
     WinActivate('プロジェクト設定')     ; Title of the header window
@@ -194,7 +208,8 @@ Func _JEH_RefreshSettings($sSoftwarePath)
     next
     Sleep(200)
     ControlClick('プロジェクト設定',"",$sPassClass)
-    Send("{ENTER}")
+    ;Send("{ENTER}")
+	ControlSend($hTestToolHandler, "", "{ENTER}")
 
     Sleep(200)
     ; Refresh 対象ソース tab
@@ -224,7 +239,8 @@ Func _JEH_RefreshSettings($sSoftwarePath)
     next
     Sleep(200)
     ControlClick('プロジェクト設定',"",$sObjectSourceClass)
-    Send("{ENTER}")
+	;Send("{ENTER}")
+	ControlSend($hTestToolHandler, "", "{ENTER}")
     WinActivate('プロジェクト設定')
     ControlClick('プロジェクト設定',"",$sSettingStorageClass)
     Sleep(200)
@@ -235,7 +251,9 @@ Func _JEH_RefreshSettings($sSoftwarePath)
 	ControlClick($g_sJMI_Spider_Version,"","[NAME:lvwFileList]")
 
     ; Save changes
-    Send("^s")
+	;Send("^s")
+	ControlSend($hTestToolHandler, "", "^s")
+	ControlSend($g_sJMI_Spider_Version, "", "[NAME:lvwFileList]", "{space}")
 	ControlSend($g_sJMI_Spider_Version, "", "[NAME:lvwFileList]", "{space}")
 EndFunc		; ==>_JEH_RefreshSettings
 
@@ -442,7 +460,7 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 				$sSpider_Log_TxtFile = "", _																				;	Setting initial value to null
 				$sUnitTest_Log_TxtFile = ""
 	Local	$iReturnF5
-
+	Local	$hTestToolHandler
 	$iReturnF5 = 0
 ;~     $g_iJEH_PLError_Check = 0
 
@@ -450,21 +468,26 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	$sSpider_Path =  StringTrimRight($sSpider_Software_Path,21)
 	$sUnitTest_Log_TxtFile = $sSpider_Path & "\UnitTest\log.txt"
 	$sSpider_Log_TxtFile = @ScriptDir & '\Log.txt'
+	$hTestToolHandler = WinGetHandle($sSpiderTitle)
 
 	; Copy the test Design File
 	ClipPut($g_sJMI_TestDesign_File)
 	; Send Keys
-	Send("{ALT}")
-	Send("{F}")
-	Send("{T}")
+	;Send("{ALT}")
+	;Send("{F}")
+	;Send("{T}")
+	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
 	; Wait for 1 second
 	WinWait("","",1)
 	; Pastes the copied test design file path
-	Send("^v")
-	Send("{ENTER}")
+	;Send("^v")
+	;Send("{ENTER}")
+	ControlSend($hTestToolHandler, "", "^v")
+	ControlSend($hTestToolHandler, "", "{ENTER}")
 	WinWait("","",5)
 	; Save the configuration of the DSpider
-	Send("^s")
+	;Send("^s")
+	ControlSend($hTestToolHandler, "", "^s")
 	WinWait("","",5)
 	; Presses F5 in the DSpider Tool
 	ControlClick($sSpiderTitle,"",$sSpider_F5_Class)
@@ -493,7 +516,7 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 ;~             EndIf
 ;~         WEnd
     Else
-     ;   _JMI_jnknsReCheckIfError($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile)
+    ;   _JMI_jnknsReCheckIfError($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile)
     EndIf
 	$iReturnF5 = 1
 	Return $iReturnF5

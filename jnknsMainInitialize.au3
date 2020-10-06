@@ -90,7 +90,7 @@ Func _JMI_jnksEnvironmentLog()
         $ret = 0
     Else
         _JMI_jnknsSpiderSettings($g_sJMI_Spider_Version)
-	    _JMI_jnknsInitLog($g_sJMI_Spider_Version)
+		_JMI_jnknsInitLog($g_sJMI_Spider_Version)
         $ret = 1
     EndIf
     Return $ret
@@ -193,28 +193,36 @@ EndFunc		;==>_JMI_jnknsShowForm
 ;=====================================================================================================================
 Func _JMI_jnknsCallDSpider()
 	Local $hRunHandler
+	Local $hTestToolHandler
 	; Check if D-Spider Latest UnitTest Tool is already running
 	if ProcessExists("D-SPIDER.exe") Then
-		WinActivate($g_sJMI_Spider_Latest_Title,"")
-		WinSetState($g_sJMI_Spider_Latest_Title,"",@SW_MAXIMIZE)
+		$hTestToolHandler = WinGetHandle(g_sJMI_Spider_Latest_Title)
+		WinMenuSelectItem($hTestToolHandler,"","","")
+		;WinActivate($g_sJMI_Spider_Latest_Title,"")
+		;WinSetState($g_sJMI_Spider_Latest_Title,"",@SW_MAXIMIZE)
 	Else
 		; Run D-Spider, returns error if no D-Spider installed
 		$hRunHandler = Run($g_sJMI_Spider_Latest)
 		if @error Then
 			if ProcessExists("FSUnitTest.exe") Then
-				WinActivate($g_sJMI_Spider_Old,"")
+				$hTestToolHandler = WinGetHandle(g_sJMI_Spider_Old)
+				WinMenuSelectItem($hTestToolHandler,"","","")
+				;WinActivate($g_sJMI_Spider_Old,"")
 				WinSetState($g_sJMI_Spider_Old,"",@SW_MAXIMIZE)
 			Else
 				$hRunHandler = Run($dspider_non_upgraded)
+				$hTestToolHandler = WinGetHandle(g_sJMI_Spider_Old_Title)
 				if @error Then
 					Exit
 				EndIf
 				; Wait until FSUnitTest opens
-				WinWaitActive($g_sJMI_Spider_Old_Title,"","")
+				WinWait(hTestToolHandler,"","")
+				;WinWaitActive($g_sJMI_Spider_Old_Title,"","")
 			EndIf
 		EndIf
 		; Wait until D-Spider Opens
-		WinWaitActive($g_sJMI_Spider_Latest_Title,"","")
+		WinWait(g_sJMI_Spider_Latest_Title,"","")
+		;WinWaitActive($g_sJMI_Spider_Latest_Title,"","")
 	endif
 	; Checks if Window exists
 	if WinExists($g_sJMI_Spider_Latest_Title) Then
@@ -269,27 +277,34 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 				$sSpider_Log_TxtFile = "", _																				;	Setting initial value to null
 				$sUnitTest_Log_TxtFile = ""
 	Local	$iReturnF5
+	Local	$hTestToolHandler
 
 	$iReturnF5 = 0
 	$sSpider_Software_Path = ControlGetText($sSpiderTitle,"",$sSpider_Software_Path_Class)
 	$sSpider_Path =  StringTrimRight($sSpider_Software_Path,21)
 	$sUnitTest_Log_TxtFile = $sSpider_Path & "\UnitTest\log.txt"
 	$sSpider_Log_TxtFile = @ScriptDir & '\Log.txt'
-
+	$hTestToolHandler = WinGetHandle($sSpiderTitle)
 	; Copy the test Design File
 	ClipPut($g_sJMI_TestDesign_File)
 	; Send Keys
-	Send("{ALT}")
-	Send("{F}")
-	Send("{T}")
+	;Send("{ALT}")
+	;Send("{F}")
+	;Send("{T}")
+	;ControlSend($hTestToolHandler, "", "&F", "{T}")
+	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
 	; Wait for 1 second
 	WinWait("","",1)
 	; Pastes the copied test design file path
-	Send("^v")
-	Send("{ENTER}")
+	;Send("^v")
+	;Send("{ENTER}")
+	ControlSend($hTestToolHandler, "", "^v")
+	ControlSend($hTestToolHandler, "", "{ENTER}")
+	
 	WinWait("","",5)
 	; Save the configuration of the DSpider
-	Send("^s")
+	;Send("^s")
+	ControlSend($hTestToolHandler, "", "^s")
 	WinWait("","",5)
 	; Presses F5 in the DSpider Tool
 	ControlClick($sSpiderTitle,"",$sSpider_F5_Class)
@@ -298,7 +313,8 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 
 	; Loop to wait until running of the tool is done
 	While 1
-		$sSpider_Local = WinActivate($sSpider_Run_Class)
+		;$sSpider_Local = WinActivate($sSpider_Run_Class)
+		$sSpider_Local = WinExists($sSpider_Run_Class,"") ;edited by ryan
 ;~             If _JPE_jnknsErrorLogger($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile) Then
 ;~                 _JEH_jnknsCheckErrHandler($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile)
 ;~                 $g_iJEH_PLError_Check = 1
@@ -345,6 +361,7 @@ Func _JMI_jnknsInitLog($sSpiderTitle)
 				$sSpider_Log_TxtFile = "", _																				;	Setting initial value to null
 				$sUnitTest_Log_TxtFile = ""
 	Local	$iReturnF5
+	Local	$hTestToolHandler
 
 	$iReturnF5 = 0
 
@@ -352,6 +369,7 @@ Func _JMI_jnknsInitLog($sSpiderTitle)
 	$sSpider_Path =  StringTrimRight($sSpider_Software_Path,21)
 	$sUnitTest_Log_TxtFile = $sSpider_Path & "\UnitTest\log.txt"
 	$sSpider_Log_TxtFile = @ScriptDir & '\Log.txt'
+	$hTestToolHandler = WinGetHandle($sSpiderTitle)
 
 ;~     Local $hWnd = WinWait($g_sJMI_Spider_Process)
 ;~     Local $hControl = ControlGetHandle($hWnd, "", "Edit1")
@@ -372,13 +390,14 @@ Func _JMI_jnknsInitLog($sSpiderTitle)
 	; Pastes the copied test design file path
 ;~     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "^v", 1)
 ;~     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "{ENTER}", 0)
-
-	Send("^v")
-	Send("{ENTER}")
+	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "^v")
+	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "{ENTER}")
+	;Send("^v")
+	;Send("{ENTER}")
 ;~ 	WinWait("","",5)
 	; Save the configuration of the DSpider
     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "^s", 0)
-	Send("^s")
+	;Send("^s")
 ;~ 	WinWait("","",5)
 
 ;~     Sleep(2000)
