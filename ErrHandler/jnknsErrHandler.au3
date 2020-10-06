@@ -413,6 +413,8 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     Local   $tIndex
     Local   $aTestSheetClass
     Local   $clickClass
+    Local   $hTestToolHandler
+
     Sleep(200)
     ; Activate FSUnit window
     WinActivate($g_sJMI_Spider_Version)
@@ -434,24 +436,33 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	; Refresh tprj settings
     $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'
     ClipPut($sUnitTestTprjPath)
-	Send("{ALT}")               ; Send Keys
-	Send("{F}")
-	Send("{O}")
+    $hTestToolHandler = WinGetHandle(g_sJMI_Spider_Version)
+
+	;Send("{ALT}")               ; Send Keys
+	;Send("{F}")
+    ;Send("{O}")
+    ControlSend($hTestToolHandler, "", "", "!afo")
+
 	Sleep(1000)                 ; Wait for 1 second
-	Send("^v")                  ; Pastes the copied tprj path
-	Send("{ENTER}")
+    ;Send("^v")                  ; Pastes the copied tprj path
+    ControlSend($hTestToolHandler, "", "", "^v")
+    ;Send("{ENTER}")
+    ControlSend($hTestToolHandler, "", "", "{ENTER}")
     Sleep(200)
 
     ; Refresh header files in the パス Tab
-    Send("{ALT}")
-    Send("{E}")
-    Send("{RIGHT}")
-    Send("{DOWN}")
-    Send("{P}")
-
+    ;Send("{ALT}")
+    ;Send("{E}")
+    ;Send("{RIGHT}")
+    ;Send("{DOWN}")
+    ;Send("{P}")
+    ControlSend($hTestToolHandler, "", "", "!ae")
+    ControlSend($hTestToolHandler, "", "", "{RIGHT}")
+    ControlSend($hTestToolHandler, "", "", "{DOWN}")
+    ControlSend($hTestToolHandler, "", "", "{P}")
     Sleep(200)
-    WinActivate('プロジェクト設定')     ; Title of the header window
-    if WinExists("[CLASS:プロジェクト設定]") Then
+    ;WinActivate('プロジェクト設定')     ; Title of the header window
+    if WinExists("[TITLE:プロジェクト設定]") Then
         MsgBox(0,"","Found it")
     Else
         MsgBox(0,"","not found")
