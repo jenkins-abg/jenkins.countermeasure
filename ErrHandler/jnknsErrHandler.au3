@@ -433,21 +433,28 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
         EndIf
     next
     Sleep(200)
-	; Refresh tprj settings
-    $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'
-    ClipPut($sUnitTestTprjPath)
-    $hTestToolHandler = WinGetHandle($g_sJMI_Spider_Version)
 
+	; Refresh tprj settings
+    $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'2
+
+    ControlSend($g_sJMI_Spider_Version, "", "", "!afo")
+
+    $hTestToolHandler = WinGetHandle("[TITLE:プロジェクトファイルを選択]")
+
+    ClipPut($sUnitTestTprjPath)
+    ControlSend($hTestToolHandler, "", "Edit1", "^v")
+    ControlSend($hTestToolHandler, "", "", "{ENTER}")
 	;Send("{ALT}")               ; Send Keys
 	;Send("{F}")
     ;Send("{O}")
-    ControlSend($hTestToolHandler, "", "", "!afo")
-
+    ;ControlSend($hTestToolHandler, "", "", "!afo")
+    ; changes windowhandler due to popup
+    ;$hTestToolHandler = WinGetHandle($g_sJMI_Spider_Version)
 	Sleep(1000)                 ; Wait for 1 second
     ;Send("^v")                  ; Pastes the copied tprj path
-    ControlSend($hTestToolHandler, "", "", "^v")
+    
     ;Send("{ENTER}")
-    ControlSend($hTestToolHandler, "", "", "{ENTER}")
+    ;ControlSend($hTestToolHandler, "", "", "{ENTER}")
     Sleep(200)
 
     ; Refresh header files in the パス Tab
