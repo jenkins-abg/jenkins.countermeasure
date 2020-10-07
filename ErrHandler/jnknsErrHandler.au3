@@ -436,21 +436,26 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
 	; Refresh tprj settings
     $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'2
+    ClipPut($sUnitTestTprjPath)
 
     ControlSend($g_sJMI_Spider_Version, "", "", "!afo")
 
-    $hTestToolHandler = WinGetHandle("[TITLE:プロジェクトファイルを選択]")
+    WinWaitActive("[CLASS:#32770]")
+    Sleep(500)
 
-    ClipPut($sUnitTestTprjPath)
-    ControlSend($hTestToolHandler, "", "Edit1", "^v")
-    ControlSend($hTestToolHandler, "", "", "{ENTER}")
+    ;$hTestToolHandler = WinGetHandle("[TITLE:プロジェクトファイルを選択]")
+    Send("^v") 
+    Send("{ENTER}")
+    ;ControlSend($hTestToolHandler, "", "Edit1", "^v")
+    ;ControlSend($hTestToolHandler, "", "", "{ENTER}")
 	;Send("{ALT}")               ; Send Keys
 	;Send("{F}")
     ;Send("{O}")
     ;ControlSend($hTestToolHandler, "", "", "!afo")
     ; changes windowhandler due to popup
     ;$hTestToolHandler = WinGetHandle($g_sJMI_Spider_Version)
-	Sleep(1000)                 ; Wait for 1 second
+#cs
+    Sleep(1000)                 ; Wait for 1 second
     ;Send("^v")                  ; Pastes the copied tprj path
     
     ;Send("{ENTER}")
@@ -590,7 +595,7 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
     Send("^s")
     Sleep(200)
-
+#ce
 EndFunc		; ==>_JEH_RefreshSettings
 
 ; #FUNCTION# ===========================================================================================================
