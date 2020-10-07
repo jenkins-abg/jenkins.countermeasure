@@ -85,16 +85,17 @@ Func _JMI_jnksEnvironmentLog()
     $g_sJMI_TestDesign_File = $sTestSheetFile
     If $sTrimPath = "" Then
         If _JMI_jnknsSpiderSettings($g_sJMI_Spider_Version) Then
-            _JMI_jnknsInitLog($g_sJMI_Spider_Version)
+            ;_JMI_jnknsInitLog($g_sJMI_Spider_Version)
         EndIf
         $ret = 0
     Else
         _JMI_jnknsSpiderSettings($g_sJMI_Spider_Version)
-		_JMI_jnknsInitLog($g_sJMI_Spider_Version)
+		;_JMI_jnknsInitLog($g_sJMI_Spider_Version)
         $ret = 1
     EndIf
     Return $ret
 EndFunc ;==>_JMI_jnksEnvironmentLog
+
 ; #FUNCTION# ===========================================================================================================
 ; Name					:	_JMI_jnknsShowForm
 ; Description		:	Launches GUI Form and set the test design and other required parameters.
@@ -250,11 +251,32 @@ endFunc		;==>_JMI_jnknsCallDSpider
 ; Author				:	prdedumo
 ; Modified			:	None
 ;=====================================================================================================================
-Func _JMI_jnknsSpiderSettings(ByRef $sSpiderTitle)
+#comments-start
+	Func _JMI_jnknsSpiderSettings(ByRef $sSpiderTitle)
 	Local $sSpider_class_filename = $g_iJM_Spider_Software_Path_Class					;	Class value depending in the AutoIt v3 Window info
     $g_sJMI_TPRJ_Path = ControlGetText($sSpiderTitle,"", $sSpider_class_filename)
 	Return 1
 EndFunc		;==>_JMI_jnknsSpiderSettings
+
+#comments-end
+
+Func _JMI_jnknsSpiderSettings()
+	Local   $sLogTextFile = @ScriptDir & "\Log.txt"
+	Local   $hTextFile = FileOpen($sLogTextFile, $FO_READ)
+	Local   $sTPRJPath
+	Local   $sTrimPath
+	Local   $ret
+
+	; Test Sheet Line number
+	$sTPRJPath = FileReadLine($hTextFile,1)
+	$sTPRJPath = StringTrimLeft($sTPRJPath,11)
+	$sTrimPath = StringStripWS($sTPRJPath,4)
+    $g_sJMI_TPRJ_Path = sTrimPath
+	Return 1
+EndFunc		;==>_JMI_jnknsSpiderSetting
+
+
+
 
 ; #FUNCTION# =========================================================================================================
 ; Name					:	_JMI_jnknsPressF5

@@ -435,17 +435,24 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     Sleep(200)
 
 	; Refresh tprj settings
-    $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'2
+    $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'
     ClipPut($sUnitTestTprjPath)
-
+    
     ControlSend($g_sJMI_Spider_Version, "", "", "!afo")
 
-    WinWaitActive("[CLASS:#32770]")
+    ; ChangeHandler due to popup
+    if WinExists("[CLASS:#32770]") Then
+        Local $tprjHandle = WinGetHandle("[CLASS:#32770]")
+    EndIf
     Sleep(500)
 
+    
+
     ;$hTestToolHandler = WinGetHandle("[TITLE:プロジェクトファイルを選択]")
-    Send("^v") 
-    Send("{ENTER}")
+    ;Send("^v") 
+    ;Send("{ENTER}")
+    ControlSend($tprjHandle, "", "Edit1", "^v")
+    ControlSend($tprjHandle, "", "", "{ENTER}")
     ;ControlSend($hTestToolHandler, "", "Edit1", "^v")
     ;ControlSend($hTestToolHandler, "", "", "{ENTER}")
 	;Send("{ALT}")               ; Send Keys
