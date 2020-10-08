@@ -417,7 +417,7 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
     Sleep(200)
     ; Activate FSUnit window
-    WinActivate($g_sJMI_Spider_Version)
+    ;WinActivate($g_sJMI_Spider_Version)
     $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
     For $i = 1 To $sTextClasses[0][0]
         If StringInStr($sTextClasses[$i][1], "SysListView32") Then
@@ -434,33 +434,122 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     next
     Sleep(200)
 
-	; Refresh tprj settings
+    ; Refresh tprj settings
+    ; Get the TPRJ from the log.txt file
+	Local $toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
+    Sleep(2000)
+
     $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'
     ClipPut($sUnitTestTprjPath)
-    
-    ControlSend($g_sJMI_Spider_Version, "", "", "!afo")
 
-    ; ChangeHandler due to popup
-    if WinExists("[CLASS:#32770]") Then
-        Local $tprjHandle = WinGetHandle("[CLASS:#32770]")
+    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+    ControlSend($toolHwnd, "", "", "!fo")               ; Click alt + f + o
+    Sleep(2000)                                         ; Delay to get the class of the pop-up item
+    
+	Local $tprjHwnd = WinGetHandle("プロジェクトファイルを選択")
+	$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("プロジェクトファイルを選択"))
+
+	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
+    ControlSend($tprjHwnd, "", "", "^v")
+    ControlSend($tprjHwnd, "", "", "{ENTER}")
+    
+    Sleep(2000)
+
+    ; Refresh header files in the パス Tab
+    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+    ControlSend($toolHwnd, "", "", "!ae")
+    ControlSend($toolHwnd, "", "", "{RIGHT}")
+    ControlSend($toolHwnd, "", "", "{DOWN}")
+    ControlSend($toolHwnd, "", "", "{P}")
+
+    Sleep(2000)                                         ; Delay to get the class of the pop-up item
+
+    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
+
+    If StringInStr($sTextClasses[7][1], @LF) Then
+        $sClassTrim = StringLeft($sTextClasses[7][1], StringInStr($sTextClasses[7][1], @LF) - 1)
     EndIf
-    Sleep(500)
+    $hTab = ControlGetHandle('プロジェクト設定', "",$sClassTrim)
+    $tIndex = _GUICtrlTab_FindTab($hTab, 'パス', True, 0)
+    If $tIndex = -1 Then
+    Else
+        _GUICtrlTab_SetCurFocus($hTab, $tIndex)
+    EndIf
 
+    Sleep(200)
+    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
+    For $i = 1 To $sTextClasses[0][0]
+        If $sTextClasses[$i][0] = '自動取得' Then
+            If StringInStr($sTextClasses[$i][1], @LF) Then
+                $sPassClass = StringLeft($sTextClasses[$i][1], StringInStr($sTextClasses[$i][1], @LF) - 1)
+            Else
+                $sPassClass = $sTextClasses[$i][1]
+            EndIf
+        EndIf
+    next
+    Sleep(200)
+    ControlClick('プロジェクト設定',"",$sPassClass)
+    ControlSend('プロジェクト設定', "", "", "{ENTER}")
     
+    Sleep(200)
 
-    ;$hTestToolHandler = WinGetHandle("[TITLE:プロジェクトファイルを選択]")
-    ;Send("^v") 
-    ;Send("{ENTER}")
-    ControlSend($tprjHandle, "", "Edit1", "^v")
-    ControlSend($tprjHandle, "", "", "{ENTER}")
-    ;ControlSend($hTestToolHandler, "", "Edit1", "^v")
-    ;ControlSend($hTestToolHandler, "", "", "{ENTER}")
-	;Send("{ALT}")               ; Send Keys
-	;Send("{F}")
-    ;Send("{O}")
-    ;ControlSend($hTestToolHandler, "", "", "!afo")
-    ; changes windowhandler due to popup
-    ;$hTestToolHandler = WinGetHandle($g_sJMI_Spider_Version)
+    ; Refresh 対象ソース tab
+    ;WinActivate('プロジェクト設定')
+    $hTab = ControlGetHandle('プロジェクト設定', "",$sClassTrim)
+    $tIndex = _GUICtrlTab_FindTab($hTab, '対象ソース', True, 0)
+    If $tIndex = -1 Then
+    Else
+        _GUICtrlTab_SetCurFocus($hTab, $tIndex)
+    EndIf
+    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
+    For $i = 1 To $sTextClasses[0][0]
+        If $sTextClasses[$i][0] = '自動取得' Then
+            If StringInStr($sTextClasses[$i][1], @LF) Then
+                $sObjectSourceClass = StringRight($sTextClasses[$i][1], StringInStr($sTextClasses[$i][1], @LF) - 1)
+            Else
+                $sObjectSourceClass = $sTextClasses[$i][1]
+            EndIf
+        EndIf
+        If $sTextClasses[$i][0] = '設定保存' Then
+            If StringInStr($sTextClasses[$i][1], @LF) Then
+                $sSettingStorageClass = StringRight($sTextClasses[$i][1], StringInStr($sTextClasses[$i][1], @LF) - 1)
+            Else
+                $sSettingStorageClass = $sTextClasses[$i][1]
+            EndIf
+        EndIf
+    next
+    Sleep(200)
+    ControlClick('プロジェクト設定',"",$sObjectSourceClass)
+    ControlSend('プロジェクト設定', "", "", "{ENTER}")
+    ControlClick('プロジェクト設定',"",$sSettingStorageClass)
+    Sleep(200)
+
+    If  $sStartUpAddress <> "" Then
+        Sleep(200)
+        ; Refresh StartUp tab
+        WinActivate('プロジェクト設定')
+        $hTab = ControlGetHandle('プロジェクト設定', "",$sClassTrim)
+        $tIndex = _GUICtrlTab_FindTab($hTab, '実行時設定', True, 0)
+        If $tIndex = -1 Then
+        Else
+            _GUICtrlTab_SetCurFocus($hTab, $tIndex)
+        EndIf
+        $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
+        For $i = 1 To $sTextClasses[0][0]
+            If  StringInStr($sTextClasses[$i][0],"0x") Then
+                $sTextClasses[$i][1] = $sStartUpAddress
+            EndIf
+        next
+    EndIf
+
+    ; Check again the test sheet
+    WinActivate($g_sJMI_Spider_Version)
+    ControlClick($g_sJMI_Spider_Version,"","[CLASS:SysHeader32]")
+    ControlSend($g_sJMI_Spider_Version,"","[NAME:lvwFileList]"," ")
+    ; Save changes
+    ControlSend($g_sJMI_Spider_Version,"","","^s")
+    ;Send("^s")
+
 #cs
     Sleep(1000)                 ; Wait for 1 second
     ;Send("^v")                  ; Pastes the copied tprj path

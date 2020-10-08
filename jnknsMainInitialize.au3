@@ -84,12 +84,12 @@ Func _JMI_jnksEnvironmentLog()
     ;MsgBox($MB_SYSTEMMODAL, "",$sTrimPath)
     $g_sJMI_TestDesign_File = $sTestSheetFile
     If $sTrimPath = "" Then
-        If _JMI_jnknsSpiderSettings($g_sJMI_Spider_Version) Then
+        If _JMI_jnknsSpiderSettings() Then
             ;_JMI_jnknsInitLog($g_sJMI_Spider_Version)
         EndIf
         $ret = 0
     Else
-        _JMI_jnknsSpiderSettings($g_sJMI_Spider_Version)
+        _JMI_jnknsSpiderSettings()
 		;_JMI_jnknsInitLog($g_sJMI_Spider_Version)
         $ret = 1
     EndIf
@@ -271,7 +271,7 @@ Func _JMI_jnknsSpiderSettings()
 	$sTPRJPath = FileReadLine($hTextFile,1)
 	$sTPRJPath = StringTrimLeft($sTPRJPath,11)
 	$sTrimPath = StringStripWS($sTPRJPath,4)
-    $g_sJMI_TPRJ_Path = sTrimPath
+    $g_sJMI_TPRJ_Path = $sTrimPath
 	Return 1
 EndFunc		;==>_JMI_jnknsSpiderSetting
 
