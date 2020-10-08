@@ -266,12 +266,20 @@ Func _JMI_jnknsSpiderSettings()
 	Local   $sTPRJPath
 	Local   $sTrimPath
 	Local   $ret
+	Local   $sTestSheetFile
 
 	; Test Sheet Line number
+	$sTestSheetFile = FileReadLine($hTextFile,2)
+	$sTestSheetFile = StringTrimLeft($sTestSheetFile,20)
+	
 	$sTPRJPath = FileReadLine($hTextFile,1)
 	$sTPRJPath = StringTrimLeft($sTPRJPath,11)
 	$sTrimPath = StringStripWS($sTPRJPath,4)
-    $g_sJMI_TPRJ_Path = $sTrimPath
+
+	; Assign to global
+	$g_sJMI_TPRJ_Path = $sTrimPath
+	$g_sJMI_TestDesign_File = $sTestSheetFile
+
 	Return 1
 EndFunc		;==>_JMI_jnknsSpiderSetting
 

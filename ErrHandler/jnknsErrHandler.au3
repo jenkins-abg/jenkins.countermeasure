@@ -434,7 +434,6 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     next
     Sleep(200)
 
-    ; Refresh tprj settings
     ; Get the TPRJ from the log.txt file
 	Local $toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
     Sleep(2000)
@@ -455,6 +454,24 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     
     Sleep(2000)
 
+    ; Get the Testsheet from the log.txt file
+	Local $toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
+    Sleep(2000)
+
+    ClipPut($g_sJMI_TestDesign_File)
+
+    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+    ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
+    Sleep(2000)                                         ; Delay to get the class of the pop-up item
+    
+	Local $tprjHwnd = WinGetHandle("テストブックを選択")
+	$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
+
+	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
+    ControlSend($tprjHwnd, "", "", "^v")
+    ControlSend($tprjHwnd, "", "", "{ENTER}")
+    Sleep(2000)
+    
     ; Refresh header files in the パス Tab
     ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
     ControlSend($toolHwnd, "", "", "!ae")
