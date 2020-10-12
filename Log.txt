@@ -1,7 +1,7 @@
-Tprj_Path:	E:\BUILD_UT\G3.5\019\G3T_TAKE_38BASE_TARGET_024_191119_01\UnitTestProject.tprj
-TestSheet_Filename:	C:\Users\111610\Desktop\SVN\Project\G3.5\019\Scratch\【ddr_rec.c】SUT_Design_Reports_No1.xlsx
-Error_Number:	3
-Status:	Pending
-Spider Version:	ソフトウェア単体テスト自動化ツール D-SPIDER  Ver.1.0.0
-Spider Log Text:	C:\work\Jenkins\automation-jenkins\Log.txt
-Error##_Fix:	Comment_カバレッジ結果
+Tprj_Path: C:\work\Jenkins\SW_TEST\PRAGMA\a2iR_02BASE_TARGET_003_190904_01\UnitTestProject.tprj
+TestSheet_Filename: C:\work\Jenkins\SW_TEST\PRAGMA\�yscrap.c�zSUT_Design_Reports.xlsx
+Error_Number:	0
+Status:	 Starting
+Spider Version:	
+Spider Log Text:	
+Error##_Fix:	

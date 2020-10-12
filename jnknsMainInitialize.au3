@@ -261,7 +261,7 @@ EndFunc		;==>_JMI_jnknsSpiderSettings
 #comments-end
 
 Func _JMI_jnknsSpiderSettings()
-	Local   $sLogTextFile = @ScriptDir & "\Log.txt"
+	Local   $sLogTextFile = "C:\work\Jenkins\automation-jenkins\Log.txt"
 	Local   $hTextFile = FileOpen($sLogTextFile, $FO_READ)
 	Local   $sTPRJPath
 	Local   $sTrimPath
@@ -271,7 +271,7 @@ Func _JMI_jnknsSpiderSettings()
 	; Test Sheet Line number
 	$sTestSheetFile = FileReadLine($hTextFile,2)
 	$sTestSheetFile = StringTrimLeft($sTestSheetFile,20)
-	
+
 	$sTPRJPath = FileReadLine($hTextFile,1)
 	$sTPRJPath = StringTrimLeft($sTPRJPath,11)
 	$sTrimPath = StringStripWS($sTPRJPath,4)
@@ -330,7 +330,7 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	;Send("{ENTER}")
 	ControlSend($hTestToolHandler, "", "^v")
 	ControlSend($hTestToolHandler, "", "{ENTER}")
-	
+
 	WinWait("","",5)
 	; Save the configuration of the DSpider
 	;Send("^s")

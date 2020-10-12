@@ -39,32 +39,38 @@ Local   $sRet, _
             $sTextClasses
 Local   $sTPRJPATH, _
             $sDrive, _
-            $sFile
+            $sFile, _
+			$sSoftwarePath
 Local   $oExcel
 Local   $hTextFile
 Local   $sTestSheetFile
 
 ; Open log text file
 $hTextFile = FileOpen($sLogTextFile, $FO_READ)
+
 ; Open testsheet
 $sTPRJPATH = FileReadLine($hTextFile, 1)
 $sTPRJPATH = StringTrimLeft($sTPRJPATH, 11)
-$sSoftwarePathStartUp = StringTrimRight($sTPRJPATH,21)    ; added by prdedumo
+$g_sJMI_TPRJ_Path = $sTPRJPATH
+$sSoftwarePath = StringTrimRight($g_sJMI_TPRJ_Path,21)
+;$sSoftwarePathStartUp = StringTrimRight($sTPRJPATH,21)    ; added by prdedumo
 $sTPRJPATH=StringTrimRight($sTPRJPATH,20)
 $sTestSheetFile = FileReadLine($hTextFile,2)
 $sTestSheetFile = StringTrimLeft($sTestSheetFile,20)
 
+
 _JMI_jnknsCallDSpider()
+Sleep(2000)
+_JMI_jnknsSpiderSettings()
+
 ; Gets the information
 $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
 if _JMI_jnknsBuildTree($sTextClasses) Then
 EndIf
-
+_JPL_jnknsCreatelogfile('Setting Start-Up address', $sTestSheetFile, 'Computing address', 'Yes', "start")			; start logging of countermeasure
 $sRet = _STRE_jnkns_CheckCurrentAddress($sTPRJPATH)
 If $sRet = 1 Then
-    _JPL_jnknsCreatelogfile('Setting Start-Up address', $sTestSheetFile, 'Computing address', 'Yes', "start")
-    _JEH_RefreshSettings($sSoftwarePathStartUp & "\")
-    _JPL_jnknsCreatelogfile('Setting Start-Up address', '', 'Test : Computation Acquired', 'Yes', "= Passed")
+   _JEH_RefreshSettings($sSoftwarePath & "\")
 EndIf
 _JPL_jnknsCreatelogfile('Setting Start-Up address', "", 'Exiting countermeasure', 'Yes', 'End')
 FileClose($hTextFile)
@@ -183,7 +189,7 @@ Func _STRE_jnkns_CheckCurrentAddress($txtfile) ;Compare current start up address
 
     $hFile=FileOpen($txtfile)
     If $hFile = -1 Then ;File Error Handler
-        MsgBox(0,'ERROR','Unable to open file for reading.')
+        ;MsgBox(0,'ERROR','Unable to open file for reading.')
         Exit 1
     EndIf;===> ;File Error Handler
     While 1 ;Start of While Loop
@@ -194,6 +200,7 @@ Func _STRE_jnkns_CheckCurrentAddress($txtfile) ;Compare current start up address
         EndIf
         If StringInStr($iSLine, "InitOffset")  Then
         $sCurrentAddress=FileReadLine($hFile,$iLine)
+
         $sCurrentAddress=StringRight($sCurrentAddress,4)
             If  ($sCurrentAddress<>$sCorrectAddress ) Then
                 $iSCorrect=_ReplaceStringInFile($txtfile, $sCurrentAddress, $sCorrectAddress)
@@ -203,7 +210,11 @@ Func _STRE_jnkns_CheckCurrentAddress($txtfile) ;Compare current start up address
             Else
             EndIf
         EndIf
-    WEnd ;End Of While Loop
+	 WEnd ;End Of While Loop
+
+	 _JPL_jnknsCreatelogfile('PL Error', '', 'Test : Calculating StartUp Addres', 'Yes', "= Passed")
+	  _JPL_jnknsCreatelogfile('PL Error', '', 'StartUp Address set to: ' & $sCorrectAddress, 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+
     FileClose($hFile) ; Close File Handler Object
     Return 1
 EndFunc ;==>_STRE_jnkns_CheckCurrentAddress
