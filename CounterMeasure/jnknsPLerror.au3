@@ -50,10 +50,17 @@ $sFix_Value = StringTrimLeft($sFix_Value,13)
 $sStatus = FileReadLine($sTextFile,4)
 $sStatus = StringTrimLeft($sStatus,8)
 
-_JPL_jnknsCreatelogfile('PL Error', $sTestSheetFile, 'Test : Finding instances', 'Yes', "start")
+_JPL_jnknsCreatelogfile('PL Error', $sTestSheetFile, 'Test : Finding instances', 'Yes', "start")		; start logging of countermeasure
+
 If _JPE_jnkns_processPLfile() Then
+Else
+   _JPL_jnknsCreatelogfile('PL Error', '', 'Test : Checking PL File', 'Yes', "= Passed")
+   _JPL_jnknsCreatelogfile('PL Error', '', 'PL file used is correct', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+
 EndIf
-_JPL_jnknsCreatelogfile('PL Error', "", 'Exiting countermeasure', 'Yes', 'End')
+
+_JPL_jnknsCreatelogfile('PL Error', "", 'Exiting countermeasure', 'Yes', 'End')			 ; end of logging
+
 FileClose($sTextFile)
 Exit
 
@@ -101,13 +108,14 @@ Func _JPE_jnkns_getSystemtype()
 	$temp_pathstring=StringSplit($temp_pathstring,"\")
 	$system_type = $temp_pathstring[$temp_pathstring[0]-2]
 	$system_type =StringLeft($system_type,4)
+
     If $system_type <> "" Then
     Else
         _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Error no PL type for ' & $system_type , 'Yes', "= Failed")
     EndIf
     Return $system_type
-EndFunc ;==>_JPE_jnkns_getSystemtype
 
+EndFunc ;==>_JPE_jnkns_getSystemtype
 
 ; #FUNCTION# ===========================================================================================================
 ; Name				    :	_JPE_jnkns_getSystmkfile()
@@ -119,7 +127,6 @@ EndFunc ;==>_JPE_jnkns_getSystemtype
 ; Author				:   rdbayanado
 ; Modified			:	None
 ;=====================================================================================================================
-
 Func _JPE_jnkns_getSystmkfile()
 
     Local $sTmpath, _
@@ -187,7 +194,8 @@ Func _JPE_jnkns_processPLfile()
         If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
-            _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : a2-e スズキ(Suzuki)', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Replaced PL File : a2-e スズキ(Suzuki)', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
             $sRet = 1
         EndIf
     ElseIf $sSystemType=="a2iR" Then
@@ -195,15 +203,18 @@ Func _JPE_jnkns_processPLfile()
         If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
-            _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : a2i_Rivian', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Replaced PL File : a2i_Rivian', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
             $sRet = 1
         EndIf
     ElseIf $sSystemType=="FA2I" Then
 		$sFileToCopy=@ScriptDir & "\PL_Files\a2用\Tools\SetWinAmsSpmcCode.pl"
+
          If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
-            _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : a2用', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Replaced PL File : a2用', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
             $sRet = 1
         EndIf
 	ElseIf $sSystemType =="TG27" Or $sSystemType =="TG25" Then
@@ -211,7 +222,8 @@ Func _JPE_jnkns_processPLfile()
         If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
-            _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : G27トヨタ (Toyota)', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Replaced PL File : G27トヨタ (Toyota)', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
             $sRet = 1
         EndIf
 	ElseIf $sSystemType=="a3H_" Then
@@ -219,7 +231,8 @@ Func _JPE_jnkns_processPLfile()
          If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
-            _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : a3 ホンダ (Honda)', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Replaced PL File : a3 ホンダ (Honda)', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
             $sRet = 1
         EndIf
 	ElseIf $sSystemType=="a3I_" Then
@@ -227,7 +240,8 @@ Func _JPE_jnkns_processPLfile()
         If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
-            _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : a3(ISUZU)', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Replaced PL File : a3(ISUZU)', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
             $sRet = 1
         EndIf
     ElseIf $sSystemType=="G3T_" Then
@@ -235,7 +249,8 @@ Func _JPE_jnkns_processPLfile()
          If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
-            _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : G3 トヨタ (Toyota)', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
+			_JPL_jnknsCreatelogfile('PL Error', '', 'Replaced PL File : G3 トヨタ (Toyota)', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
             $sRet = 1
         EndIf
 	Else
