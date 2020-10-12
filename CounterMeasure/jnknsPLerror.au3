@@ -54,9 +54,8 @@ _JPL_jnknsCreatelogfile('PL Error', $sTestSheetFile, 'Test : Finding instances',
 
 If _JPE_jnkns_processPLfile() Then
 Else
-   _JPL_jnknsCreatelogfile('PL Error', '', 'Test : Checking PL File', 'Yes', "= Passed")
-   _JPL_jnknsCreatelogfile('PL Error', '', 'PL file used is correct', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
-
+    _JPL_jnknsCreatelogfile('PL Error', '', 'Test : Checking PL File', 'Yes', "= Passed")
+    _JPL_jnknsCreatelogfile('PL Error', '', 'PL file used is correct', 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
 EndIf
 
 _JPL_jnknsCreatelogfile('PL Error', "", 'Exiting countermeasure', 'Yes', 'End')			 ; end of logging
@@ -75,19 +74,26 @@ Exit
 ; Modified			:	None
 ;=====================================================================================================================
 Func _JPE_jnkns_BinaryCompare($sFilePath_1, $sFilePath_2, $iPercentageRead = 100)
+
+    Local $hFileOpen = FileOpen($sFilePath_1, BitOR($FO_READ, $FO_BINARY))
+
     $iPercentageRead = Int($iPercentageRead)
     If $iPercentageRead > 100 Or $iPercentageRead < 0 Then
         $iPercentageRead = 100
     EndIf
-    Local $hFileOpen = FileOpen($sFilePath_1, BitOR($FO_READ, $FO_BINARY))
+    
     If $hFileOpen = -1 Then Return SetError(1, 0, False)
+
     Local $bBinary_1 = FileRead($hFileOpen, ($iPercentageRead / 100) * FileGetSize($sFilePath_1))
     FileClose($hFileOpen)
+
     $hFileOpen = FileOpen($sFilePath_2, BitOR($FO_READ, $FO_BINARY))
     If $hFileOpen = -1 Then Return SetError(2, 0, False)
     Local $bBinary_2 = FileRead($hFileOpen, ($iPercentageRead / 100) * FileGetSize($sFilePath_2))
+
     FileClose($hFileOpen)
     Return $bBinary_1 = $bBinary_2
+
 EndFunc   ;==>_JPE_jnkns_BinaryCompare
 
 ; #FUNCTION# ===========================================================================================================
@@ -105,7 +111,7 @@ Func _JPE_jnkns_getSystemtype()
 
 	$temp_pathstring = $sTprjPath
 	$temp_pathstring&="Tools\SetWinAmsSpmcCode.pl"
-	$temp_pathstring=StringSplit($temp_pathstring,"\")
+	$temp_pathstring = StringSplit($temp_pathstring,"\")
 	$system_type = $temp_pathstring[$temp_pathstring[0]-2]
 	$system_type =StringLeft($system_type,4)
 
@@ -134,10 +140,7 @@ Func _JPE_jnkns_getSystmkfile()
             $hFile , _
             $aSystemArray[10]
 
-
     ;System Array List Definitions
-
-
     $aSystemArray[0] ="a2e"
     $aSystemArray[1] ="SA2E"
     $aSystemArray[2] ="a2iR"
@@ -153,7 +156,6 @@ Func _JPE_jnkns_getSystmkfile()
     $sSystm = FileReadLine($hFile,26) ;Store into array
     ;Additional Checking if matches into folder file name
 
-
     For $i =0 To 7;Loop in the elements of system array list
         If StringInStr($sSystm, $aSystemArray[$i] ) Then
             _JPL_jnknsCreatelogfile('PL Error', "", 'Test :Checked MakeFile :,'& 'Yes', "= Failed ")
@@ -163,8 +165,8 @@ Func _JPE_jnkns_getSystmkfile()
         EndIf
     Next
 
+EndFunc ;==>_JPE_jnkns_getSystmkfile
 
-EndFunc
 ; #FUNCTION# ===========================================================================================================
 ; Name					:	_JPE_jnkns_processPLfile
 ; Description		:	Change PL files according to target system unit
@@ -185,9 +187,9 @@ Func _JPE_jnkns_processPLfile()
     $sRet = 0
     $sSystemType=_JPE_jnkns_GetSystemtype()
 
- 	Local $string2="System Type: "&$sSystemType
-     $sSourcePath =StringTrimRight($sTprjPath,21)
-     $sSourcePath&="\Tools\SetWinAmsSpmcCode.pl"
+    Local $string2="System Type: "&$sSystemType
+    $sSourcePath =StringTrimRight($sTprjPath,21)
+    $sSourcePath&="\Tools\SetWinAmsSpmcCode.pl"
 
 	If $sSystemType == "a2ei" Or $sSystemType == "SA2E" Then
         $sFileToCopy=@ScriptDir & "\PL_Files\a2-e スズキ(Suzuki)\Tools\SetWinAmsSpmcCode.pl"
@@ -209,8 +211,7 @@ Func _JPE_jnkns_processPLfile()
         EndIf
     ElseIf $sSystemType=="FA2I" Then
 		$sFileToCopy=@ScriptDir & "\PL_Files\a2用\Tools\SetWinAmsSpmcCode.pl"
-
-         If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
+        If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
 			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
@@ -228,7 +229,7 @@ Func _JPE_jnkns_processPLfile()
         EndIf
 	ElseIf $sSystemType=="a3H_" Then
 		$sFileToCopy=@ScriptDir & "\PL_Files\a3 ホンダ (Honda)\Tools\SetWinAmsSpmcCode.pl"
-         If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
+        If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
 			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
@@ -246,7 +247,7 @@ Func _JPE_jnkns_processPLfile()
         EndIf
     ElseIf $sSystemType=="G3T_" Then
 		$sFileToCopy=@ScriptDir & "\PL_Files\G3 トヨタ (Toyota)\Tools\SetWinAmsSpmcCode.pl"
-         If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
+        If _JPE_jnkns_BinaryCompare($sSourcePath, $sFileToCopy) == "False" Then
             FileSetAttrib ( $sSourcePath, "-R" )
             FileCopy($sFileToCopy,$sSourcePath,$FC_OVERWRITE)
 			_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Updating PL File', 'Yes', "= Passed")
@@ -257,8 +258,5 @@ Func _JPE_jnkns_processPLfile()
         _JPL_jnknsCreatelogfile('PL Error', "", 'Test : Replaced PL File : Unknown System Type', 'Yes', "= Failed")
 	EndIf
     Return $sRet
+
 EndFunc ;==>_JPE_jnkns_processPLfile
-
-
-
-
