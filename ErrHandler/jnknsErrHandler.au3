@@ -441,21 +441,23 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     $sUnitTestTprjPath = $sSoftwarePath & 'UnitTestProject.tprj'
     ClipPut($sUnitTestTprjPath)
 
-    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
     ControlSend($toolHwnd, "", "", "!fo")               ; Click alt + f + o
     Sleep(2000)                                         ; Delay to get the class of the pop-up item
-    
+
 	Local $tprjHwnd = WinGetHandle("プロジェクトファイルを選択")
 	$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("プロジェクトファイルを選択"))
 
 	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
     ControlSend($tprjHwnd, "", "", "^v")
     ControlSend($tprjHwnd, "", "", "{ENTER}")
-    
+
     Sleep(2000)
-    
+
     ; Refresh header files in the パス Tab
-    ;ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+	$toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
+	Sleep(2000)
+    ;ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
     ControlSend($toolHwnd, "", "", "!ae{RIGHT}{DOWN}{P}")
     ;ControlSend($toolHwnd, "", "", "{RIGHT}")
     ;ControlSend($toolHwnd, "", "", "{DOWN}")
@@ -463,9 +465,9 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
     Sleep(2000)                                         ; Delay to get the class of the pop-up item
 
-    Local $refreshHwnd = WinGetHandle('プロジェクト設定')
-    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
-    ControlFocus($refreshHwnd, "", $sTextClasses[7][1])
+    Local $popHwnd = WinGetHandle("プロジェクト設定")
+    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("プロジェクト設定"))
+	ControlFocus($popHwnd, "", $sTextClasses[7][1])
 
     If StringInStr($sTextClasses[7][1], @LF) Then
         $sClassTrim = StringLeft($sTextClasses[7][1], StringInStr($sTextClasses[7][1], @LF) - 1)
@@ -491,11 +493,10 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     Sleep(200)
     ControlClick('プロジェクト設定',"",$sPassClass)
     ControlSend('プロジェクト設定', "", "", "{ENTER}")
-    
+
     Sleep(200)
 
     ; Refresh 対象ソース tab
-    ;WinActivate('プロジェクト設定')
     $hTab = ControlGetHandle('プロジェクト設定', "",$sClassTrim)
     $tIndex = _GUICtrlTab_FindTab($hTab, '対象ソース', True, 0)
     If $tIndex = -1 Then
@@ -541,31 +542,42 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
                 $sTextClasses[$i][1] = $sStartUpAddress
             EndIf
         next
-    EndIf
+	 EndIf
+
+   Sleep(2000)
 
     ; Get the Testsheet from the log.txt file
-	Local $toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
+	$toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
     Sleep(2000)
 
     ClipPut($g_sJMI_TestDesign_File)
 
-    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
     ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
     Sleep(2000)                                         ; Delay to get the class of the pop-up item
-    
-	Local $tprjHwnd = WinGetHandle("テストブックを選択")
+
+	$tprjHwnd = WinGetHandle("テストブックを選択")
 	$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
 
 	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
     ControlSend($tprjHwnd, "", "", "^v")
     ControlSend($tprjHwnd, "", "", "{ENTER}")
+    ControlSend($toolHwnd,"","","^s")
+    Sleep(2000)
+
+
+    ; Check again the test sheet
+    ;WinActivate($g_sJMI_Spider_Version)
+    ;ControlClick($g_sJMI_Spider_Version,"","[CLASS:SysHeader32]")
+    ;ControlSend($g_sJMI_Spider_Version,"","[NAME:lvwFileList]"," ")
+    ; Save changes
     ControlSend($g_sJMI_Spider_Version,"","","^s")
     ;Send("^s")
 
 #cs
     Sleep(1000)                 ; Wait for 1 second
     ;Send("^v")                  ; Pastes the copied tprj path
-    
+
     ;Send("{ENTER}")
     ;ControlSend($hTestToolHandler, "", "", "{ENTER}")
     Sleep(200)
@@ -586,7 +598,7 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
         MsgBox(0,"","Found it")
     Else
         MsgBox(0,"","not found")
-    endif   
+    endif
     $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
     If StringInStr($sTextClasses[7][1], @LF) Then
 			$sClassTrim = StringLeft($sTextClasses[7][1], StringInStr($sTextClasses[7][1], @LF) - 1)
