@@ -4,7 +4,7 @@
 	Language		: 	English
 	Description		:	Countermeasure Main process for fixing Comment Result sheet error
 	Author				: 	prdedumo
-    Version            :    0.1
+    Version            :    1.1
 #ce	==================================================================================================================
 
 #include <FileConstants.au3>
@@ -36,8 +36,7 @@ Local	$sLogTextFile = @ScriptDir & '\..\Log.txt', _
 			$sSpider_Local, _
             $sUnitTest_Log_TxtFile, _
             $sSpider_Log_TxtFile, _
-            $sSoftwarePath = "", _
-            $sSheetVer
+            $sSoftwarePath = ""
 Local	$sRetShowForm, _
 			$sTextClasses
 
@@ -46,8 +45,7 @@ Local	$hTextFile
 Local	$oExcel, _
 			$oWorkbook
 
-; Open log text file
-$hTextFile = FileOpen($sLogTextFile, $FO_READ)
+$hTextFile = FileOpen($sLogTextFile, $FO_READ)			; Open log text file
 
 ; Initialization of variables required
 ; ====================================
@@ -71,8 +69,7 @@ $sSoftwarePath = StringTrimRight($g_sJMI_TPRJ_Path,21)
 $sStatus = FileReadLine($hTextFile,4)
 $sStatus = StringTrimLeft($sStatus,8)
 
-; Initialize FSUnit
-_JMI_jnknsCallDSpider()
+_JMI_jnknsCallDSpider()			; Initialize FSUnit
 
 ; Gets the information
 $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
@@ -81,38 +78,34 @@ EndIf
 
 _JPL_jnknsCreatelogfile('Comment Result Error', $sTestSheetFile, 'Test : Renaming Test Sheet', 'Yes', "start")				; start logging of countermeasure
 
-$oExcel = _Excel_Open()			; instance of Excel
+$oExcel = _Excel_Open()			; Instance of Excel
 If @error Then
-   _JPL_jnknsCreatelogfile('Comment Result Error', "", 'Error: There was an error reading the file', 'No', 'Failed')
-   Exit
+	_JPL_jnknsCreatelogfile('Comment Result Error', "", 'Error: There was an error reading the file', 'No', 'Failed')
+	Exit
 EndIf
 
 $oWorkbook = _Excel_BookOpen($oExcel, $g_sJMI_TestDesign_File)	 	; Open an existing workbook and return its object identifier.
-   If @error Then
-        _JPL_jnknsCreatelogfile('Comment Result Error', "", 'Error: There was an error reading the file', 'No', 'Failed')
-        Exit
-	 EndIf
+If @error Then
+    _JPL_jnknsCreatelogfile('Comment Result Error', "", 'Error: There was an error reading the file', 'No', 'Failed')
+    Exit
+EndIf
 
-	; Fix the test sheet name
-    $sSheetVer= _Excel_RangeRead($oWorkbook, Default, "A1")
-    $sComment_Result = $oWorkbook.Sheets(2).name
+$sComment_Result = $oWorkbook.Sheets(2).name			; Get the comment_result name from test design
 
-	Sleep(2000)
+Sleep(2000)
 
-	_Excel_BookClose($oWorkbook,False)
-	_Excel_Close($oExcel)
+_Excel_BookClose($oWorkbook,False)
+_Excel_Close($oExcel)
 
-	; Write countermeasure to log file
-    _JPL_jnknsCreatelogfile('Comment_Result Error', '', 'Test : Updating FSUNIT Comment_Result', 'Yes', "= Passed")
-	_JPL_jnknsCreatelogfile('Comment_Result Error', '', 'Updated : Sheet name to ' & $sComment_Result, 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+; Write countermeasure to log file
+_JPL_jnknsCreatelogfile('Comment_Result Error', '', 'Test : Updating FSUNIT Comment_Result', 'Yes', "= Passed")
+_JPL_jnknsCreatelogfile('Comment_Result Error', '', 'Updated : Sheet name to ' & $sComment_Result, 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
 
+_JEH_RefreshSettings($sSoftwarePath & "\","",$sComment_Result)
 
-    _JEH_RefreshSettings($sSoftwarePath & "\","",$sComment_Result)
+_JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Exiting countermeasure', 'Yes', 'End')		; end of logging
 
-    _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Exiting countermeasure', 'Yes', 'End')		; end of logging
-
-	Sleep(2000)
-
+Sleep(2000)
 
 #cs ========================================================
     ;This was commented out since the next pipeline method is PL Error
