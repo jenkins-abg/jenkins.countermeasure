@@ -451,7 +451,7 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
     ControlSend($tprjHwnd, "", "", "^v")
     ControlSend($tprjHwnd, "", "", "{ENTER}")
-	  ControlSend($toolHwnd,"","","^s")
+	ControlSend($toolHwnd,"","","^s")
 
     Sleep(2000)
 
@@ -540,11 +540,11 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
                 $sTextClasses[$i][1] = $sStartUpAddress
             EndIf
         next
-	 EndIf
+	EndIf
 
-   Sleep(2000)
+    Sleep(2000)
 
-   If $sComment_Result <> "" Then
+    If $sComment_Result <> "" Then
         ; Get Cmment_result From TestSheet
 
 		ControlSend($toolHwnd, "", "", "!ae{RIGHT}{DOWN}{A}")
@@ -563,10 +563,10 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
             EndIf
         next
         ControlClick($sCapturedTitle,"",$clickClass)
-	 EndIf
+	EndIf
 
-	 ControlSend($toolHwnd,"","","^s")
-	 Sleep(2000)
+	ControlSend($toolHwnd,"","","^s")
+	Sleep(2000)
 
     ; Get the Testsheet from the log.txt file
 	$toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
@@ -636,7 +636,7 @@ Func _JPE_jnknsProcessExist($aProcessList, $sUnitTest_Log_TxtFile, $sSpider_Log_
         $g_JPE_isErrorValid = 0
         Return 0
     ElseIf $aProcessList[0][0] <> 0 Then
-         For $i = 1 To $aProcessList[0][0]
+        For $i = 1 To $aProcessList[0][0]
             If StringInStr($aProcessList[$i][0], "-java") Then
             Else
                 While (1)
@@ -647,7 +647,7 @@ Func _JPE_jnknsProcessExist($aProcessList, $sUnitTest_Log_TxtFile, $sSpider_Log_
                             Sleep(200)
                             _JEH_jnknsCheckErrHandler($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile)
                             $g_iJEH_PLError_Check = 1
-                             ProcessClose($aProcessList[$i][1])
+                            ProcessClose($aProcessList[$i][1])
                             Return 1
                             ExitLoop
                         Else

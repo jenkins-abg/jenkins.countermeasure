@@ -58,7 +58,7 @@ $sTPRJPATH=StringTrimRight($sTPRJPATH,20)
 $sTestSheetFile = FileReadLine($hTextFile,2)
 $sTestSheetFile = StringTrimLeft($sTestSheetFile,20)
 
-
+; Initializa Environment
 _JMI_jnknsCallDSpider()
 Sleep(2000)
 _JMI_jnknsSpiderSettings()
@@ -67,13 +67,18 @@ _JMI_jnknsSpiderSettings()
 $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
 if _JMI_jnknsBuildTree($sTextClasses) Then
 EndIf
+
+; Write countermeasure to log file
 _JPL_jnknsCreatelogfile('Setting Start-Up address', $sTestSheetFile, 'Computing address', 'Yes', "start")			; start logging of countermeasure
 $sRet = _STRE_jnkns_CheckCurrentAddress($sTPRJPATH)
 If $sRet = 1 Then
-   _JEH_RefreshSettings($sSoftwarePath & "\")
+    _JEH_RefreshSettings($sSoftwarePath & "\")
 EndIf
+
+; Write countermeasure to log file
 _JPL_jnknsCreatelogfile('Setting Start-Up address', "", 'Exiting countermeasure', 'Yes', 'End')
 FileClose($hTextFile)
+
 Exit
 
 ; #INTERNAL_USE_ONLY# ===========================================================================================================
@@ -88,11 +93,11 @@ Exit
 ;=====================================================================================================================
 Func _STRE_jnkns_GetXcellSheetPath()
     Local $sTestSheetFile, _
-             $sDrive, _
-             $sDir, _
-             $sFileName, _
-             $sExtension, _
-             $sFile
+            $sDrive, _
+            $sDir, _
+            $sFileName, _
+            $sExtension, _
+            $sFile
     Local $oExcel
     Local $hTextFile
     Local $fTestDesign
@@ -127,10 +132,10 @@ Func STRE_jnkns_GetStartUp($fStartupFile)
     Local $aSrtArray[35]
     Local $hFile
     Local $iSrtLine, _
-             $iSLine
+            $iSLine
     Local $sStartAddress, _
-             $sEndAddress, _
-             $sResultAddress
+            $sEndAddress, _
+            $sResultAddress
 
     $hFile = FileOpen($fStartupFile&"startup.lst",$FO_READ)
     $iSrtLine=0
@@ -180,10 +185,10 @@ EndFunc ;==>STRE_jnkns_GetStartUp
 Func _STRE_jnkns_CheckCurrentAddress($txtfile) ;Compare current start up address into generated address
     Local $hFile
     Local $iSLine, _
-             $iLine = 0, _
-             $iSCorrect
+            $iLine = 0, _
+            $iSCorrect
     Local $sCurrentAddress, _
-             $sCorrectAddress = STRE_jnkns_GetStartUp($txtfile);Set value from return of correct StartUp Address
+            $sCorrectAddress = STRE_jnkns_GetStartUp($txtfile);Set value from return of correct StartUp Address
 
     $txtfile=$txtfile&"UnitTestProject.tprj"
 
@@ -210,11 +215,12 @@ Func _STRE_jnkns_CheckCurrentAddress($txtfile) ;Compare current start up address
             Else
             EndIf
         EndIf
-	 WEnd ;End Of While Loop
+	WEnd ;End Of While Loop
 
-	 _JPL_jnknsCreatelogfile('PL Error', '', 'Test : Calculating StartUp Addres', 'Yes', "= Passed")
-	  _JPL_jnknsCreatelogfile('PL Error', '', 'StartUp Address set to: ' & $sCorrectAddress, 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+	_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Calculating StartUp Addres', 'Yes', "= Passed")
+	_JPL_jnknsCreatelogfile('PL Error', '', 'StartUp Address set to: ' & $sCorrectAddress, 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
 
     FileClose($hFile) ; Close File Handler Object
     Return 1
+    
 EndFunc ;==>_STRE_jnkns_CheckCurrentAddress
