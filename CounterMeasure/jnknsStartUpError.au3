@@ -217,8 +217,8 @@ Func _STRE_jnkns_CheckCurrentAddress($txtfile) ;Compare current start up address
         EndIf
 	WEnd ;End Of While Loop
 
-	_JPL_jnknsCreatelogfile('PL Error', '', 'Test : Calculating StartUp Addres', 'Yes', "= Passed")
-	_JPL_jnknsCreatelogfile('PL Error', '', 'StartUp Address set to: ' & $sCorrectAddress, 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+	_JPL_jnknsCreatelogfile('StartUp Error', '', 'Test : Calculating StartUp Addres', 'Yes', "= Passed")
+	_JPL_jnknsCreatelogfile('StartUp Error', '', 'StartUp Address set to: ' & $sCorrectAddress, 'Yes', @CRLF & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
 
     FileClose($hFile) ; Close File Handler Object
     Return 1
