@@ -74,7 +74,7 @@ $sStatus = FileReadLine($sTextFile,4)
 $sStatus = StringTrimLeft($sStatus,8)
 
 
- _JMI_jnknsCallDSpider()
+_JMI_jnknsCallDSpider()
 $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
 if _JMI_jnknsBuildTree($sTextClasses) Then
     $sSpider_Software_Path = ControlGetText('ソフトウェア単体テスト自動化ツール D-SPIDER  Ver.1.0.0',"",$g_iJM_Spider_Software_Path_Class)

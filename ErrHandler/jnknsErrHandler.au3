@@ -453,35 +453,19 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     ControlSend($tprjHwnd, "", "", "{ENTER}")
     
     Sleep(2000)
-
-    ; Get the Testsheet from the log.txt file
-	Local $toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
-    Sleep(2000)
-
-    ClipPut($g_sJMI_TestDesign_File)
-
-    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
-    ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
-    Sleep(2000)                                         ; Delay to get the class of the pop-up item
-    
-	Local $tprjHwnd = WinGetHandle("テストブックを選択")
-	$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
-
-	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
-    ControlSend($tprjHwnd, "", "", "^v")
-    ControlSend($tprjHwnd, "", "", "{ENTER}")
-    Sleep(2000)
     
     ; Refresh header files in the パス Tab
-    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
-    ControlSend($toolHwnd, "", "", "!ae")
-    ControlSend($toolHwnd, "", "", "{RIGHT}")
-    ControlSend($toolHwnd, "", "", "{DOWN}")
-    ControlSend($toolHwnd, "", "", "{P}")
+    ;ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+    ControlSend($toolHwnd, "", "", "!ae{RIGHT}{DOWN}{P}")
+    ;ControlSend($toolHwnd, "", "", "{RIGHT}")
+    ;ControlSend($toolHwnd, "", "", "{DOWN}")
+    ;ControlSend($toolHwnd, "", "", "{P}")
 
     Sleep(2000)                                         ; Delay to get the class of the pop-up item
 
+    Local $refreshHwnd = WinGetHandle('プロジェクト設定')
     $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
+    ControlFocus($refreshHwnd, "", $sTextClasses[7][1])
 
     If StringInStr($sTextClasses[7][1], @LF) Then
         $sClassTrim = StringLeft($sTextClasses[7][1], StringInStr($sTextClasses[7][1], @LF) - 1)
@@ -559,11 +543,22 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
         next
     EndIf
 
-    ; Check again the test sheet
-    WinActivate($g_sJMI_Spider_Version)
-    ControlClick($g_sJMI_Spider_Version,"","[CLASS:SysHeader32]")
-    ControlSend($g_sJMI_Spider_Version,"","[NAME:lvwFileList]"," ")
-    ; Save changes
+    ; Get the Testsheet from the log.txt file
+	Local $toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
+    Sleep(2000)
+
+    ClipPut($g_sJMI_TestDesign_File)
+
+    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class 
+    ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
+    Sleep(2000)                                         ; Delay to get the class of the pop-up item
+    
+	Local $tprjHwnd = WinGetHandle("テストブックを選択")
+	$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
+
+	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
+    ControlSend($tprjHwnd, "", "", "^v")
+    ControlSend($tprjHwnd, "", "", "{ENTER}")
     ControlSend($g_sJMI_Spider_Version,"","","^s")
     ;Send("^s")
 

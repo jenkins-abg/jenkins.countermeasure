@@ -106,12 +106,12 @@ EndIf
     _JEH_RefreshSettings($sSoftwarePath & "\","",$sComment_Result)
     _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Exiting countermeasure', 'Yes', 'End')
     If ($sComment_Result <> "Comment_Result") Or ($sComment_Result <> "Comment_カバレッジ結果") Then
-       _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Invalid Sheetname', 'No', 'Failed ')
+        _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Invalid Sheetname', 'No', 'Failed ')
     EndIf
     If $sSheetVer =="(Format Rev3.00)" Then
         _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Format Rev3.00', 'Yes', 'Proceed')
     ElseIF $sSheetVer =="(Format Rev3.00)" Then
-       _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Format Rev2.00', 'Yes', 'Proceed')
+        _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Format Rev2.00', 'Yes', 'Proceed')
     Else
         _JPL_jnknsCreatelogfile('Comment_Result Error', "", 'Invalid Sheet Version', 'No', 'Failed ')
     EndIf

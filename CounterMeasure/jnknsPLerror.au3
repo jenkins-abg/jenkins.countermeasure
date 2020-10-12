@@ -51,7 +51,7 @@ $sStatus = FileReadLine($sTextFile,4)
 $sStatus = StringTrimLeft($sStatus,8)
 
 _JPL_jnknsCreatelogfile('PL Error', $sTestSheetFile, 'Test : Finding instances', 'Yes', "start")
- If _JPE_jnkns_processPLfile() Then
+If _JPE_jnkns_processPLfile() Then
 EndIf
 _JPL_jnknsCreatelogfile('PL Error', "", 'Exiting countermeasure', 'Yes', 'End')
 FileClose($sTextFile)
@@ -122,7 +122,7 @@ EndFunc ;==>_JPE_jnkns_getSystemtype
 
 Func _JPE_jnkns_getSystmkfile()
 
-   Local $sTmpath, _
+    Local $sTmpath, _
             $sSystm, _
             $hFile , _
             $aSystemArray[10]
