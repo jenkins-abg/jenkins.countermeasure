@@ -451,6 +451,7 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
     ControlSend($tprjHwnd, "", "", "^v")
     ControlSend($tprjHwnd, "", "", "{ENTER}")
+	  ControlSend($toolHwnd,"","","^s")
 
     Sleep(2000)
 
@@ -546,6 +547,30 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
    Sleep(2000)
 
+   If $sComment_Result <> "" Then
+        ; Get Cmment_result From TestSheet
+
+		ControlSend($toolHwnd, "", "", "!ae{RIGHT}{DOWN}{A}")
+
+        Sleep(2000)
+        $sCapturedTitle = WinGetHandle("アプリケーション設定")
+        $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("アプリケーション設定"))
+            ClipPut($sComment_Result)
+            Sleep(200)
+			ControlSend($sCapturedTitle, "", "", "{TAB}{TAB}{TAB}{TAB}{TAB}")
+			ControlSend($sCapturedTitle, "", "", "{DELETE}^v")
+
+        For $i = 1 To $sTextClasses[0][0]
+            If  StringInStr($sTextClasses[$i][0],"設定保存") Then
+                $clickClass = $sTextClasses[$i][1]
+            EndIf
+        next
+        ControlClick($sCapturedTitle,"",$clickClass)
+	 EndIf
+
+	 ControlSend($toolHwnd,"","","^s")
+	 Sleep(2000)
+
     ; Get the Testsheet from the log.txt file
 	$toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
     Sleep(2000)
@@ -562,160 +587,10 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
     ControlSend($tprjHwnd, "", "", "^v")
     ControlSend($tprjHwnd, "", "", "{ENTER}")
+	Sleep(200)
     ControlSend($toolHwnd,"","","^s")
     Sleep(2000)
 
-
-    ; Check again the test sheet
-    ;WinActivate($g_sJMI_Spider_Version)
-    ;ControlClick($g_sJMI_Spider_Version,"","[CLASS:SysHeader32]")
-    ;ControlSend($g_sJMI_Spider_Version,"","[NAME:lvwFileList]"," ")
-    ; Save changes
-    ControlSend($g_sJMI_Spider_Version,"","","^s")
-    ;Send("^s")
-
-#cs
-    Sleep(1000)                 ; Wait for 1 second
-    ;Send("^v")                  ; Pastes the copied tprj path
-
-    ;Send("{ENTER}")
-    ;ControlSend($hTestToolHandler, "", "", "{ENTER}")
-    Sleep(200)
-
-    ; Refresh header files in the パス Tab
-    ;Send("{ALT}")
-    ;Send("{E}")
-    ;Send("{RIGHT}")
-    ;Send("{DOWN}")
-    ;Send("{P}")
-    ControlSend($hTestToolHandler, "", "", "!ae")
-    ControlSend($hTestToolHandler, "", "", "{RIGHT}")
-    ControlSend($hTestToolHandler, "", "", "{DOWN}")
-    ControlSend($hTestToolHandler, "", "", "{P}")
-    Sleep(200)
-    ;WinActivate('プロジェクト設定')     ; Title of the header window
-    if WinExists("[TITLE:プロジェクト設定]") Then
-        MsgBox(0,"","Found it")
-    Else
-        MsgBox(0,"","not found")
-    endif
-    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
-    If StringInStr($sTextClasses[7][1], @LF) Then
-			$sClassTrim = StringLeft($sTextClasses[7][1], StringInStr($sTextClasses[7][1], @LF) - 1)
-    EndIf
-    $hTab = ControlGetHandle('プロジェクト設定', "",$sClassTrim)
-    $tIndex = _GUICtrlTab_FindTab($hTab, 'パス', True, 0)
-    If $tIndex = -1 Then
-    Else
-        _GUICtrlTab_SetCurFocus($hTab, $tIndex)
-    EndIf
-    WinActivate('プロジェクト設定')
-    Sleep(200)
-    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
-    For $i = 1 To $sTextClasses[0][0]
-        If $sTextClasses[$i][0] = '自動取得' Then
-            If StringInStr($sTextClasses[$i][1], @LF) Then
-                $sPassClass = StringLeft($sTextClasses[$i][1], StringInStr($sTextClasses[$i][1], @LF) - 1)
-            Else
-                $sPassClass = $sTextClasses[$i][1]
-            EndIf
-        EndIf
-    next
-    Sleep(200)
-    ControlClick('プロジェクト設定',"",$sPassClass)
-    Send("{ENTER}")
-
-    Sleep(200)
-    ; Refresh 対象ソース tab
-    WinActivate('プロジェクト設定')
-    $hTab = ControlGetHandle('プロジェクト設定', "",$sClassTrim)
-    $tIndex = _GUICtrlTab_FindTab($hTab, '対象ソース', True, 0)
-    If $tIndex = -1 Then
-    Else
-        _GUICtrlTab_SetCurFocus($hTab, $tIndex)
-    EndIf
-    $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
-    For $i = 1 To $sTextClasses[0][0]
-        If $sTextClasses[$i][0] = '自動取得' Then
-            If StringInStr($sTextClasses[$i][1], @LF) Then
-                $sObjectSourceClass = StringRight($sTextClasses[$i][1], StringInStr($sTextClasses[$i][1], @LF) - 1)
-            Else
-                $sObjectSourceClass = $sTextClasses[$i][1]
-            EndIf
-        EndIf
-        If $sTextClasses[$i][0] = '設定保存' Then
-            If StringInStr($sTextClasses[$i][1], @LF) Then
-                $sSettingStorageClass = StringRight($sTextClasses[$i][1], StringInStr($sTextClasses[$i][1], @LF) - 1)
-            Else
-                $sSettingStorageClass = $sTextClasses[$i][1]
-            EndIf
-        EndIf
-    next
-    Sleep(200)
-    ControlClick('プロジェクト設定',"",$sObjectSourceClass)
-    Send("{ENTER}")
-
-    WinActivate('プロジェクト設定')
-    ControlClick('プロジェクト設定',"",$sSettingStorageClass)
-    Sleep(200)
-
-    If  $sStartUpAddress <> "" Then
-        Sleep(200)
-        ; Refresh StartUp tab
-        WinActivate('プロジェクト設定')
-        $hTab = ControlGetHandle('プロジェクト設定', "",$sClassTrim)
-        $tIndex = _GUICtrlTab_FindTab($hTab, '実行時設定', True, 0)
-        If $tIndex = -1 Then
-        Else
-            _GUICtrlTab_SetCurFocus($hTab, $tIndex)
-        EndIf
-        $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle('プロジェクト設定'))
-        For $i = 1 To $sTextClasses[0][0]
-            If  StringInStr($sTextClasses[$i][0],"0x") Then
-                $sTextClasses[$i][1] = $sStartUpAddress
-            EndIf
-        next
-    EndIf
-
-    ; Check again the test sheet
-    WinActivate($g_sJMI_Spider_Version)
-    ControlClick($g_sJMI_Spider_Version,"","[CLASS:SysHeader32]")
-    ControlSend($g_sJMI_Spider_Version,"","[NAME:lvwFileList]"," ")
-    ; Save changes
-    Send("^s")
-
-    If $sComment_Result <> "" Then
-        Sleep(200)
-        ; Refresh Comment Result tab
-        WinActivate($g_sJMI_Spider_Version)
-        Send("{ALT}")
-        Send("{E}")
-        Send("{RIGHT}")
-        Send("{DOWN}")
-        Send("{A}")
-        Sleep(500)
-        $sCapturedTitle = WinGetTitle("[active]")
-        WinActivate($sCapturedTitle)
-        $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($sCapturedTitle))
-            ClipPut($sComment_Result)
-            Sleep(200)
-            Send("{TAB}")
-            Send("{TAB}")
-            Send("{TAB}")
-            Send("{TAB}")
-            Send("{TAB}")
-            Send("^v")
-        For $i = 1 To $sTextClasses[0][0]
-            If  StringInStr($sTextClasses[$i][0],"設定保存") Then
-                $clickClass = $sTextClasses[$i][1]
-            EndIf
-        next
-        ControlClick($sCapturedTitle,"",$clickClass)
-    EndIf
-
-    Send("^s")
-    Sleep(200)
-#ce
 EndFunc		; ==>_JEH_RefreshSettings
 
 ; #FUNCTION# ===========================================================================================================
