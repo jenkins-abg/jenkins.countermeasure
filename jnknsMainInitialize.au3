@@ -324,21 +324,25 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	;ControlSend($hTestToolHandler, "", "&F", "{T}")
 	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
 	; Wait for 1 second
-	WinWait("","",1)
+	Sleep(1000)
+	;WinWait("","",1)
 	; Pastes the copied test design file path
 	;Send("^v")
 	;Send("{ENTER}")
 	ControlSend($hTestToolHandler, "", "^v")
 	ControlSend($hTestToolHandler, "", "{ENTER}")
 
-	WinWait("","",5)
+	Sleep(5000)
+	;WinWait("","",5)
 	; Save the configuration of the DSpider
 	;Send("^s")
 	ControlSend($hTestToolHandler, "", "^s")
-	WinWait("","",5)
+	Sleep(5000)
+	;WinWait("","",5)
 	; Presses F5 in the DSpider Tool
 	ControlClick($sSpiderTitle,"",$sSpider_F5_Class)
-	WinWait("","",10)
+	Sleep(10000)
+	;WinWait("","",10)
 	$sSpider_Local = WinActivate($sSpider_Run_Class)
 
 	; Loop to wait until running of the tool is done

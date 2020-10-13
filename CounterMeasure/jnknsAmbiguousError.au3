@@ -119,7 +119,7 @@ if $iErrNumber = 4 And $sStatus = "Pending" Then
 			if StringInStr($aArray[$i],$sTargetFunction[0]) Then
 			else
 				$aPathSplit = _PathSplit($aArray[$i], $sDrive, $sDir, $sFileName, $sExtension)
- 				; BackUp file before editing
+				; BackUp file before editing
 				Sleep(2000)
 				$iBackUpResult = _JEH_BackUpFile($aArray[$i], $sSoftwarePath, $aPathSplit[$PATH_FILENAME], $aPathSplit[$PATH_EXTENSION])
 				Sleep(2000)
@@ -131,7 +131,7 @@ if $iErrNumber = 4 And $sStatus = "Pending" Then
 			EndIf
 		Next
 	EndIf
-     _JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Test : Editing File', 'Yes', "= Passed")
+    _JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Test : Editing File', 'Yes', "= Passed")
 	if $iCopyResult Then
 		; Rebuild Test Environment if copying of files is complete
 		$iRebuildResult = _JEH_Rebuild_Software ($sSoftwarePath)
@@ -139,7 +139,7 @@ if $iErrNumber = 4 And $sStatus = "Pending" Then
 	EndIf
     Sleep(200)
     ; Refresh FSUnit Settings
-    _JEH_RefreshSettings($sSoftwarePath)
+    _JEH_RefreshSettings($sSoftwarePath & "\")
 	; Re-run the sheet
     _JMI_jnknsPressF5($g_sJMI_Spider_Version)
     ; Rechecks if different error occured

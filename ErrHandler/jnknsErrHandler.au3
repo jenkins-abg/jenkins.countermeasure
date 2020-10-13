@@ -289,8 +289,13 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 	endif
     Sleep(200)
 	Local $iMinty = Run("C:\cygwin\bin\mintty.exe -i /Cygwin-Terminal.ico -", "", @SW_SHOW, 0x8)
-	; Wait 5 seconds for the Cygwin window to appear.
-	WinWaitActive("~","",5)
+    
+    ; Loop check if cygwin window exists
+    While 1
+        if WinExists("~") Then
+            ExitLoop
+        EndIf
+    Wend
 	; Sleep for 2 seconds.
 	Sleep(2000)
 	; Loop to check if cygwin terminal is ready
@@ -307,16 +312,21 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 			ExitLoop
 		EndIf
         Sleep(1000)
-	WEnd
+    WEnd
+    
 	; Start of make clean process
 	; ========================================================
 	; Change Directory
 	$sSoftwarePath = StringReplace($sSoftwarePath,"\", "/")
-	ClipPut($sSoftwarePath)
-	WinActivate("[CLASS:mintty]", "")
-	Sleep(3000)																								; Sleep for 3 seconds
-	Send('cd ' & $sSoftwarePath & "{ENTER}" )											; Change directory
-	$sNewClass = WinGetTitle("[ACTIVE]")													; Get New Class after Change Directory
+    ClipPut($sSoftwarePath)
+    
+    Local $minttyHwnd = WinGetHandle("[CLASS:mintty]", "")
+	;WinActivate("[CLASS:mintty]", "")
+    Sleep(3000)
+    ControlFocus($minttyHwnd,"","[CLASS:mintty]")																								; Sleep for 3 seconds
+    ControlSend($minttyHwnd,"","",cd ' & $sSoftwarePath & "{ENTER}" )
+    ;Send('cd ' & $sSoftwarePath & "{ENTER}" )											; Change directory
+	;$sNewClass = WinGetTitle("[ACTIVE]")													; Get New Class after Change Directory
 	Sleep(3000)																								; Sleep for 3 seconds
 	$sSoftwarePath = StringReplace($sSoftwarePath,"/", "\")						; Change software path to access the makeFile
 	$hFileOpen = FileOpen($sSoftwarePath & "\makefile", $FO_READ)		; Open Makefile
@@ -324,10 +334,12 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
         Return False
     EndIf
 	$sFileRead = FileReadLine($hFileOpen, 12)
-	$sSetSource = _StringBetween($sFileRead, "(", ")", $STR_ENDNOTSTART)
-	Send('source ' & $sSetSource[0] & '.sh' & "{ENTER}")
-	Sleep(2000)		; Sleep for 2 seconds
-	Send('make clean  > makeClean_output_and_error.txt 2>&1' & "{ENTER}")
+    $sSetSource = _StringBetween($sFileRead, "(", ")", $STR_ENDNOTSTART)
+    ControlSend($minttyHwnd,"","",'source ' & $sSetSource[0] & '.sh' & "{ENTER}")
+	;Send('source ' & $sSetSource[0] & '.sh' & "{ENTER}")
+    Sleep(2000)		; Sleep for 2 seconds
+    ControlSend($minttyHwnd,"","",'make clean  > makeClean_output_and_error.txt 2>&1' & "{ENTER}")
+	;Send('make clean  > makeClean_output_and_error.txt 2>&1' & "{ENTER}")
 	; Loop to check if make clean is done
 	While (1)
 		If _JEH_Check_OutPutFile($sSoftwarePath & "\makeClean_output_and_error.txt") Then
@@ -336,8 +348,9 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
         Sleep(1000)
 	WEnd
 	; End of make clean process
-	Sleep(2000)
-	; Start of make processmake clean  > output_and_
+    Sleep(2000)
+    
+	; Start of make processmake clean  > makeBuild_output_and_error
 	; ========================================================
 	; Check make.bat setting if factory or not
 	; Loop to make.bat to get make factory or make only command
