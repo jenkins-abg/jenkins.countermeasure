@@ -152,10 +152,13 @@ Func _AE_jnknsCheckAssembly()
 				_FileReadToArray( $filepath & "/spih1_drv_st.h", $fileArrayB)
 				For $b = 1 To $fileArrayB[0]
 					FileSetAttrib( $filepath & "/spih1_drv_st.h", "-R" )
-					$replaceSyncp = StringReplace( FileReadLine($filepath & "/spih1_drv_st.h", $b), '"syncp"', '"nop"', 0)
-					_FileWriteToLine( $filepath & "/spih1_drv_st.h", $b, $replaceSyncp, 1 )
-					$sLineStringEdited = $sLineStringEdited & "Edited line code number: " & $b & " in " & $filepath & "/spih1_drv_st.h" & @CRLF
-					$sLineStringEdited = $sLineStringEdited & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB
+					local $readFileAsm = FileReadLine($filepath & "/spih1_drv_st.h", $b)		
+					if $readFileAsm = "*asm*" Then
+						$replaceSyncp = StringReplace( FileReadLine($filepath & "/spih1_drv_st.h", $b), '"syncp"', '"nop"', 0)
+						_FileWriteToLine( $filepath & "/spih1_drv_st.h", $b, $replaceSyncp, 1 )
+						$sLineStringEdited = $sLineStringEdited & "Edited line code number: " & $b & " in " & $filepath & "/spih1_drv_st.h" & @CRLF
+						$sLineStringEdited = $sLineStringEdited & @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB
+					endif
 				Next
 				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
                 _JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
