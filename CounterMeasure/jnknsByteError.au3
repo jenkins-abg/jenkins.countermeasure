@@ -99,7 +99,7 @@ Sleep(3000)
 checkError()
 
 If $IsByteError ==1 Then
-    _JPL_jnknsCreatelogfile('Byte Error', $sTestSheetFile, 'Test : Error Detection', 'Yes', "start")
+    _JPL_jnknsCreatelogfile('Byte Error', $sTestSheetFile, 'Test : ByteError check...', 'Yes', "start")
 
     Sleep(10000)
     _BE_RunIFSheet(_BE_GetXCellPath())

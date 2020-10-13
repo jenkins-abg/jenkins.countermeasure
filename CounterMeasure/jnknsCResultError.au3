@@ -76,7 +76,7 @@ $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Versio
 if _JMI_jnknsBuildTree($sTextClasses) Then
 EndIf
 
-_JPL_jnknsCreatelogfile('Comment Result Error', $sTestSheetFile, 'Test : Renaming Test Sheet', 'Yes', "start")				; start logging of countermeasure
+_JPL_jnknsCreatelogfile('Comment Result Error', $sTestSheetFile, 'Test : Comment_Result check...', 'Yes', "start")				; start logging of countermeasure
 
 $oExcel = _Excel_Open()			; Instance of Excel
 If @error Then

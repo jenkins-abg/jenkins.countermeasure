@@ -112,7 +112,7 @@ Func _AE_jnknsCheckAssembly()
     EndIf
     $counter = 0
     ; Initialize Countermeasure
-    _JPL_jnknsCreatelogfile('Assembler Error', $g_sJMI_TestDesign_File, 'Test : Editing definition', 'Yes', "start")
+    _JPL_jnknsCreatelogfile('Assembler Error', $g_sJMI_TestDesign_File, 'Test : Assembler Check...', 'Yes', "start")
 	For $a = 1 To $fileArrayA[0]
 		
 		$sLineStringEdited = ""

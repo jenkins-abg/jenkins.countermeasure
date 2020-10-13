@@ -99,7 +99,7 @@ EndIf
 ; Condition if CPU EMERGENCY is found
 If $iCPU_Count > 0 Then
     ; start logging of countermeasure
-    _JPL_jnknsCreatelogfile('CPU_Emergency', $sTestSheetFile, 'Test : Editing definition', 'Yes', "start")
+    _JPL_jnknsCreatelogfile('CPU_Emergency', $sTestSheetFile, 'Test : CPU_EMERGENCY check...', 'Yes', "start")
     $aArrayC = _JEH_FindInFile('CPU_EMERGENCY', $sSoftwarePath, '*.h')  ; Search definition file of CPU_Emergency
 
     ; Loop for any declaration found

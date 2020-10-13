@@ -50,7 +50,7 @@ $sFix_Value = StringTrimLeft($sFix_Value,13)
 $sStatus = FileReadLine($sTextFile,4)
 $sStatus = StringTrimLeft($sStatus,8)
 
-_JPL_jnknsCreatelogfile('PL Error', $sTestSheetFile, 'Test : Finding instances', 'Yes', "start")		; start logging of countermeasure
+_JPL_jnknsCreatelogfile('PL Error', $sTestSheetFile, 'Test : PL check...', 'Yes', "start")		; start logging of countermeasure
 
 If _JPE_jnkns_processPLfile() Then
 Else

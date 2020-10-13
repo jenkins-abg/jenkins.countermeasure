@@ -109,7 +109,7 @@ EndIf
 if $iErrNumber = 4 And $sStatus = "Pending" Then
 	$sTargetFunction = _StringBetween($sTestSheetFile, "【", "】", $STR_ENDNOTSTART)
     ; start logging of countermeasure
-    _JPL_jnknsCreatelogfile('Ambiguous Error', $sTestSheetFile, 'Test : Finding instances', 'Yes', "start")
+    _JPL_jnknsCreatelogfile('Ambiguous Error', $sTestSheetFile, 'Test : Ambiguous check...', 'Yes', "start")
 	; Find ambiguous in all software file
 	$aArray = _JEH_FindInFile($sFix_Value & '*', $sSoftwarePath, '*.c;*.h') ; Search for the fix value created in the log file
 	$i = 0

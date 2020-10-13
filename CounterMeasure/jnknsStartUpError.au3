@@ -69,7 +69,7 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
 EndIf
 
 ; Write countermeasure to log file
-_JPL_jnknsCreatelogfile('Setting Start-Up address', $sTestSheetFile, 'Computing address', 'Yes', "start")			; start logging of countermeasure
+_JPL_jnknsCreatelogfile('Setting Start-Up address', $sTestSheetFile, 'Test: StartUp Address check...', 'Yes', "start")			; start logging of countermeasure
 $sRet = _STRE_jnkns_CheckCurrentAddress($sTPRJPATH)
 If $sRet = 1 Then
     _JEH_RefreshSettings($sSoftwarePath & "\")

@@ -100,7 +100,7 @@ EndIf
 ; Condition if Pragma is found
 If $iPragma_Count > 0 Then
     ; start logging of countermeasure
-    _JPL_jnknsCreatelogfile('Pragma Error', $sTestSheetFile, 'Test : Editing definition', 'Yes', "start")
+    _JPL_jnknsCreatelogfile('Pragma Error', $sTestSheetFile, 'Test : #Pragma check...', 'Yes', "start")
     ReDim $iLine_Count[$iLineCountA]
     ; Getting Line number of pragma
     For $i = 1 To $iLineCountA -1
