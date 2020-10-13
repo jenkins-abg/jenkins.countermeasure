@@ -324,7 +324,7 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 	;WinActivate("[CLASS:mintty]", "")
     Sleep(3000)
     ControlFocus($minttyHwnd,"","[CLASS:mintty]")																								; Sleep for 3 seconds
-    ControlSend($minttyHwnd,"","",cd ' & $sSoftwarePath & "{ENTER}" )
+    ControlSend($minttyHwnd,"","",'cd ' & $sSoftwarePath & "{ENTER}" )
     ;Send('cd ' & $sSoftwarePath & "{ENTER}" )											; Change directory
 	;$sNewClass = WinGetTitle("[ACTIVE]")													; Get New Class after Change Directory
 	Sleep(3000)																								; Sleep for 3 seconds

@@ -115,7 +115,7 @@ Func _AE_jnknsCheckAssembly()
     _JPL_jnknsCreatelogfile('Assembler Error', $g_sJMI_TestDesign_File, 'Test : Editing definition', 'Yes', "start")
 	For $a = 1 To $fileArrayA[0]
 		
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If StringInStr($fileArrayA[$a], 'AD_SYNCP') Then
 			_FileReadToArray( $filepath & "/ad_drv_st.h", $fileArrayB)
 			For $b = 1 To $fileArrayB[0]
@@ -130,7 +130,7 @@ Func _AE_jnknsCheckAssembly()
 			$counter = $counter + 1
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If StringInStr($fileArrayA[$a], 'ADCHK_SYNCP') Then
 			_FileReadToArray( $filepath & "/cpuadc_pmchk_st.h", $fileArrayB)
 			For $b = 1 To $fileArrayB[0]
@@ -144,7 +144,7 @@ Func _AE_jnknsCheckAssembly()
 			$counter = $counter + 1
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spih1_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spih1_drv_st.h", $fileArrayB)
@@ -160,7 +160,7 @@ Func _AE_jnknsCheckAssembly()
 			EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spih2_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spih2_drv_st.h", $fileArrayB)
@@ -176,7 +176,7 @@ Func _AE_jnknsCheckAssembly()
 			EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spih3_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spih3_drv_st.h", $fileArrayB)
@@ -192,7 +192,7 @@ Func _AE_jnknsCheckAssembly()
 			EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spih4_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spih4_drv_st.h", $fileArrayB)
@@ -208,7 +208,7 @@ Func _AE_jnknsCheckAssembly()
 			EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spi1_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spi1_drv_st.h", $fileArrayB)
@@ -224,7 +224,7 @@ Func _AE_jnknsCheckAssembly()
             EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spi2_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spi2_drv_st.h", $fileArrayB)
@@ -240,7 +240,7 @@ Func _AE_jnknsCheckAssembly()
 			EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spi3_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spi3_drv_st.h", $fileArrayB)
@@ -256,7 +256,7 @@ Func _AE_jnknsCheckAssembly()
 			EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If _AE_jnknsCheckSource() = "spi4_drv.c" Then
 			If StringInStr($fileArrayA[$a], 'SPI_SYNCP') Then
 				_FileReadToArray( $filepath & "/spi4_drv_st.h", $fileArrayB)
@@ -272,7 +272,7 @@ Func _AE_jnknsCheckAssembly()
 			EndIf
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If StringInStr($fileArrayA[$a], 'SYNCP') OR StringInStr($fileArrayA[$a], 'SYNCI')  Then
 			_FileReadToArray( $filepath & "/system.h", $fileArrayB)
 			For $b = 1 To $fileArrayB[0]
@@ -288,7 +288,7 @@ Func _AE_jnknsCheckAssembly()
 			$counter = $counter + 1
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If StringInStr($fileArrayA[$a], 'SYSDRV_SYNCP') Or StringInStr($fileArrayA[$a], 'SYSDRV_SYNCI')  Then
 			_FileReadToArray( $filepath & "/system_drv_gl.h", $fileArrayB)
 			For $b = 1 To $fileArrayB[0]
@@ -304,7 +304,7 @@ Func _AE_jnknsCheckAssembly()
 			$counter = $counter + 1
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If StringInStr($fileArrayA[$a], 'TAU_SYNCP') Then
 			_FileReadToArray( $filepath & "/timer_drv_st.h", $fileArrayB)
 			For $b = 1 To $fileArrayB[0]
@@ -318,7 +318,7 @@ Func _AE_jnknsCheckAssembly()
 			$counter = $counter + 1
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If StringInStr($fileArrayA[$a], 'ACTIVATE_TASK')  Or StringInStr($fileArrayA[$a], 'TERMINATE_TASK')  Or StringInStr($fileArrayA[$a], 'GET_TASK_ID')  Or StringInStr($fileArrayA[$a], 'GET_TASK_STATE')  Or _
         StringInStr($fileArrayA[$a], 'SET_EVENT')  Or StringInStr($fileArrayA[$a], 'CLEAR_EVENT')  Or StringInStr($fileArrayA[$a], 'GET_EVENT')  Or StringInStr($fileArrayA[$a], 'WAIT_EVENT')  Or StringInStr($fileArrayA[$a], 'SET_REL_ALARM') Then
 			_FileReadToArray( $filepath & "/system_drv_gl.h", $fileArrayB)
@@ -337,7 +337,7 @@ Func _AE_jnknsCheckAssembly()
         $counter = $counter + 1
 		EndIf
 
-		sLineStringEdited = ""
+		$sLineStringEdited = ""
 		If StringInStr($fileArrayA[$a], 'asm(') Then
             If StringInStr($fileArrayA[$a], 'asm("nop")') Or StringInStr($fileArrayA[$a], 'asm("NOP")') Then
             Else
