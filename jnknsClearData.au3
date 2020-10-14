@@ -50,7 +50,8 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
     ; Creating first log
     _JPL_jnknsCreatelogfile("", "", "", "", "")
     ; Log text for pre-countermeasure
-    $initStatus = _JMI_jnksEnvironmentLog()
+    ;$initStatus = _JMI_jnksEnvironmentLog()
+    _JMI_jnknsSpiderSettings()
     $sSoftwarePath = StringTrimRight($g_sJMI_TPRJ_Path, 21)
 	$spider_UnitLog_TxtFile = $sSoftwarePath & "\UnitTest\log.txt"
 
