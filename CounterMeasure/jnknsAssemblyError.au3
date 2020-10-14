@@ -132,7 +132,7 @@ Func _AE_jnknsCheckAssembly()
 			Next
 			
 			if $editDone > 0 then
-				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 				_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing AD_SYNCP definition', 'Yes', "= Passed")
 			EndIf
 			$counter = $counter + 1
@@ -153,7 +153,7 @@ Func _AE_jnknsCheckAssembly()
 				EndIf
 			Next
 			if $editDone > 0 then
-				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 				_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing ADCHK_SYNCP definition', 'Yes', "= Passed")
 			EndIf
 			$counter = $counter + 1
@@ -176,7 +176,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				EndIf
 				$counter = $counter + 1
@@ -199,7 +199,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				endif
                 $counter = $counter + 1
@@ -222,7 +222,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				endif
                 $counter = $counter + 1
@@ -245,7 +245,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				endif
                 $counter = $counter + 1
@@ -268,7 +268,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				endif
                 $counter = $counter + 1
@@ -291,7 +291,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				endif
                 $counter = $counter + 1
@@ -314,7 +314,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				endif
                 $counter = $counter + 1
@@ -337,7 +337,7 @@ Func _AE_jnknsCheckAssembly()
 					endif
 				Next
 				if $editDone > 0 then
-					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+					_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 					_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SPI_SYNCP definition', 'Yes', "= Passed")
 				endif
                 $counter = $counter + 1
@@ -366,7 +366,7 @@ Func _AE_jnknsCheckAssembly()
 				endif
 			Next
 			if $editDone > 0 then
-				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 				_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SYNCP and/or SYNCI  definition', 'Yes', "= Passed")
 			endif
 			$counter = $counter + 1
@@ -394,7 +394,7 @@ Func _AE_jnknsCheckAssembly()
 				endif
 			Next
 			if $editDone > 0 then
-				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 				_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing SYSDRV_SYNCP and/or SYSDRV_SYNCI  definition', 'Yes', "= Passed")
 			endif
 			$counter = $counter + 1
@@ -415,7 +415,7 @@ Func _AE_jnknsCheckAssembly()
 				endif
 			Next
 			if $editDone > 0 then
-				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 				_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing TAU_SYNCP  definition', 'Yes', "= Passed")
 			endif
 			$counter = $counter + 1
@@ -451,7 +451,7 @@ Func _AE_jnknsCheckAssembly()
 				endif
 			Next
 			if $editDone > 0 then
-				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 				_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing **_TASK, **_EVENT, SET_REL_ALARM  definitions', 'Yes', "= Passed")
 			endif
         $counter = $counter + 1
@@ -474,7 +474,7 @@ Func _AE_jnknsCheckAssembly()
 				endif
 			EndIf
 			if $editDone > 0 then
-				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', @TAB & @TAB  & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & @TAB & "STATUS : OK")
+				_JPL_jnknsCreatelogfile('Assembler Error', '', $sLineStringEdited, 'Yes', "STATUS : OK")
 				_JPL_jnknsCreatelogfile('Assembler Error', "", 'Test : Editing ' & $source & ' definitions', 'Yes', "= Passed")
 			endif
 		EndIf
