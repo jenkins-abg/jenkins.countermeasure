@@ -361,8 +361,10 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 			ExitLoop
 		EndIf
 	Next
-	WinActivate("[CLASS:mintty]", "")
-	Send($sMakeCommand & ' > makeBuild_output_and_error.txt 2>&1' & "{ENTER}" )
+    ;WinActivate("[CLASS:mintty]", "")
+    ControlFocus($minttyHwnd,"","[CLASS:mintty]")
+    ControlSend($minttyHwnd,"","",$sMakeCommand & ' > makeBuild_output_and_error.txt 2>&1' & "{ENTER}" )
+	;Send($sMakeCommand & ' > makeBuild_output_and_error.txt 2>&1' & "{ENTER}" )
 	; Loop to check if building is done
 	While (1)
 		If _JEH_Check_OutPutFile($sSoftwarePath & "\makeBuild_output_and_error.txt") Then
