@@ -317,7 +317,9 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 	; Start of make clean process
 	; ========================================================
 	; Change Directory
-	$sSoftwarePath = StringReplace($sSoftwarePath,"\", "/")
+    $sSoftwarePath = StringReplace($sSoftwarePath,"\", "/")
+    $sSoftwarePath = StringReplace($sSoftwarePath,":", "")
+    $sSoftwarePath = "/cygdrive/" & $sSoftwarePath
     ClipPut($sSoftwarePath)
     
     Local $minttyHwnd = WinGetHandle("[CLASS:mintty]", "")
