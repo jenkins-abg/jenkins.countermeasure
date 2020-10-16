@@ -315,6 +315,7 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	$sUnitTest_Log_TxtFile = $sSpider_Path & "\UnitTest\log.txt"
 	$sSpider_Log_TxtFile = @ScriptDir & '\Log.txt'
 	$hTestToolHandler = WinGetHandle($sSpiderTitle)
+	
 	; Copy the test Design File
 	;ClipPut($g_sJMI_TestDesign_File)
 	; Send Keys
@@ -344,16 +345,16 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	;WinWait("","",5)
 	; Presses F5 in the DSpider Tool
 	ControlClick($sSpiderTitle,"",$sSpider_F5_Class)
-	Sleep(10000)
+	Sleep(5000)
 	;WinWait("","",10)
 	While (1)
-	  if WinExists($sSpider_Run_Class) Then
-		 ExitLoop
-	  EndIf
-	  WEnd
+		if WinExists($sSpider_Run_Class) Then
+			ExitLoop
+		EndIf
+	WEnd
 
 	;$sSpider_Local = WinActivate($sSpider_Run_Class)
-	  $sSpider_Local = WinGetHandle($sSpider_Run_Class)
+	$sSpider_Local = WinGetHandle($sSpider_Run_Class)
 	; Loop to wait until running of the tool is done
 	While 1
 		;$sSpider_Local = WinActivate($sSpider_Run_Class)
@@ -380,6 +381,7 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
         _JMI_jnknsReCheckIfError($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile)
     EndIf
 	$iReturnF5 = 1
+	
 	Return $iReturnF5
 EndFunc		;==>_JMI_jnknsPressF5
 

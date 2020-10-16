@@ -62,16 +62,16 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
             $iFileCounter = $iFileCounter + 1
         EndIf
         Sleep(100)
-	 Next
+	Next
 
     If $iFileCounter > 0 Then
-        ;$retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
-        $retBuild =  1
+        $retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
+        ;$retBuild =  1
     EndIf
     _JEH_RefreshSettings($sSoftwarePath & '\')
     If $initStatus = 1 Then
         If $retBuild = 1 Then
-            _JMI_jnknsPressF5($g_sJMI_Spider_Version)
+            ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
         EndIf
     EndIf
     if FileExists($spider_UnitLog_TxtFile) Then

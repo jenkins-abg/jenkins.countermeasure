@@ -83,9 +83,10 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
 EndIf
 
 Sleep(3000)
-_JEH_RefreshSettings($sSpider_Path)
+_JEH_RefreshSettings($sSpider_Path )
 ;MsgBox(0,"",$sTestSheetFile)
-Send("{F5}")
+_JMI_jnknsPressF5($g_sJMI_Spider_Version)
+;Send("{F5}")
 WinWait("","",10)
 $sSpider_Local = WinActivate($sSpider_Run_Class)
 While 1
@@ -107,12 +108,14 @@ If $IsByteError ==1 Then
     _JMI_jnknsCallDSpider()
     Sleep(3000)
     _JPL_jnknsCreatelogfile('Byte Error', "", 'Test : Separating Sheet', 'Yes', "= Passed")
-    _JEH_RefreshSettings($sSpider_Path)
-    Send("{F5}")
-    WinWait("","",10)
-    $sSpider_Local = WinActivate($sSpider_Run_Class)
+    _JEH_RefreshSettings($sSpider_Path  & '\')
+    _JMI_jnknsPressF5($g_sJMI_Spider_Version)
+    ;Send("{F5}")
+    Sleep(10000)
+    ;$sSpider_Local = WinActivate($sSpider_Run_Class)
+    Local $spiderHwnd = WinGetHandle($sSpider_Run_Class)
 	While 1
-		$sSpider_Local = WinActivate($sSpider_Run_Class)
+		$spiderHwnd = WinGetHandle($sSpider_Run_Class)
             if $sSpider_Local <> 0 Then
             Else
                 ExitLoop
@@ -133,11 +136,11 @@ Func checkError()
     $hTextFile=FileOpen($sLogfile,$FO_READ)
     $iLine=FileReadLine($hTextFile,7)
     If StringInStr($iLine, "スタブ関数の数が最大値(40)を超えました。")  Then
-         $IsByteError=1
+        $IsByteError=1
         _BE_jnknsMain( _BE_GetXCellPath())
-      ;  MsgBox(0,"","Test1")
+        ;  MsgBox(0,"","Test1")
     ElseIf StringInStr($iLine, "スタブ機能のメモリ使用量が最大値(4096 byte)を超えました。")  Then
-          $IsByteError=1
+        $IsByteError=1
         _BE_jnknsMain( _BE_GetXCellPath())
     Else
         _JPL_jnknsCreatelogfile('Byte Error', "", 'Test : '&$iLine &' Error Detected ', 'Yes', "= Failed") ; Insert into log file if different error exist.
@@ -145,7 +148,7 @@ Func checkError()
         ;MsgBox(0,"","Test2")
     EndIf
     FileClose($hTextFile)
- EndFunc
+EndFunc
 
 
 ; #INTERNAL_USE_ONLY# ================================================================================================
@@ -156,23 +159,23 @@ Func checkError()
 ; ====================================================================================================================
 Func _BE_jnknsGetArrayData( $xCellFile,$iSheetnum)
     Local $oExcel, _
-             $oWorkbook
+            $oWorkbook
     Local $iLastCol, _
-             $iRangeLast, _
-             $iRows, _
-             $iCols, _
-             $iWorksheets, _
-             $iArrayNumCount
+            $iRangeLast, _
+            $iRows, _
+            $iCols, _
+            $iWorksheets, _
+            $iArrayNumCount
     Local $aRawArray, _
-              $aSecArray[1][2000], _
-              $aElements[0], _
-              $aUniqElements[0], _
-              $aTempArrayStack[0][0], _
-              $aSheetList[0], _
-              $aIsSeparate[0], _
-              $sStrTypeValidator, _
-              $sStrSubfuncValidator, _
-              $aClearArray[1]=[""]
+            $aSecArray[1][2000], _
+            $aElements[0], _
+            $aUniqElements[0], _
+            $aTempArrayStack[0][0], _
+            $aSheetList[0], _
+            $aIsSeparate[0], _
+            $sStrTypeValidator, _
+            $sStrSubfuncValidator, _
+            $aClearArray[1]=[""]
     $oExcel = _Excel_Open(False)
     $oWorkbook = _Excel_BookOpen($oExcel, $xCellFile)
     $iWorksheets=$oWorkbook.Worksheets.Count
@@ -198,7 +201,7 @@ Func _BE_jnknsGetArrayData( $xCellFile,$iSheetnum)
                 EndIf;===>String Handler
             EndIf;==> ;Check if valid
         Next; ===> Loop on column
-   Next;===>;Loop on Rows
+    Next;===>;Loop on Rows
 
 ;~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~                           Get Unique elements in the Array                    ~~
@@ -246,46 +249,46 @@ EndFunc
 ;                ........: cjhernandez
 ; Remarks .......:
 ; ====================================================================================================================
- Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets,$iSheetnum) ; Separate sheet which exceeds subfunction call
+Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets,$iSheetnum) ; Separate sheet which exceeds subfunction call
     Local $oExcel, _
-              $oFtestDesign, _
-              $oBook
+            $oFtestDesign, _
+            $oBook
     Local  $aTobeSeparated, _
-              $aSheetList
+            $aSheetList
     Local  $sSheetname, _
-              $sStringCount, _
-              $sStringAppend1, _
-              $sStringAppend2
+            $sStringCount, _
+            $sStringAppend1, _
+            $sStringAppend2
     Local $fNewSheet, _
-              $fIFSheet
+            $fIFSheet
 
     $oExcel=_Excel_Open(False)
     $oBook = _Excel_BookNew( $oExcel, 1 )
     $oftestDesign = _Excel_BookOpen ( $oExcel, $ftestDesign )
 
     If StringInStr($fTestDesign, "Rev") Then ;Check String File as validation for Revision String
-         If StringInStr($fTestDesign,"No.") Then
-              $sStringAppend1 = StringTrimRight( $FtestDesign,17)
-              $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
-              $sStringCount+=4
-              $sStringAppend1=$sStringAppend1& "_"
-         Else
-               $sStringAppend1 = StringTrimRight( $FtestDesign,13)
+        If StringInStr($fTestDesign,"No.") Then
+            $sStringAppend1 = StringTrimRight( $FtestDesign,17)
+            $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
+            $sStringCount+=4
+            $sStringAppend1=$sStringAppend1& "_"
+        Else
+            $sStringAppend1 = StringTrimRight( $FtestDesign,13)
                 $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
-         EndIf
-          $sStringAppend2=StringTrimLeft($FtestDesign,$sStringCount); Set value of string 2 to concatenated string
+        EndIf
+        $sStringAppend2=StringTrimLeft($FtestDesign,$sStringCount); Set value of string 2 to concatenated string
         $fNewSheet= $sStringAppend1&"No."&$iSheetnum& $sStringAppend2
     Else ; Case Scenario if New Test Design
-          If StringInStr($fTestDesign,"No.") Then
-              $sStringAppend1 = StringTrimRight( $FtestDesign,17)
-              $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
-              $sStringCount+=4
-              $sStringAppend1=$sStringAppend1& "_"
-          Else
-               $sStringAppend1 = StringTrimRight( $FtestDesign,13)
-                $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
-          EndIf
-          $sStringAppend2=StringTrimLeft($FtestDesign,$sStringCount); Set value of string 2 to concatenated string
+        If StringInStr($fTestDesign,"No.") Then
+            $sStringAppend1 = StringTrimRight( $FtestDesign,17)
+            $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
+            $sStringCount+=4
+            $sStringAppend1=$sStringAppend1& "_"
+        Else
+            $sStringAppend1 = StringTrimRight( $FtestDesign,13)
+            $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
+        EndIf
+        $sStringAppend2=StringTrimLeft($FtestDesign,$sStringCount); Set value of string 2 to concatenated string
         $fNewSheet= $sStringAppend1&"_"&"No."&$iSheetnum& $sStringAppend2
 
     EndIf ;===>  ;Check String File as validation for Revision String
@@ -322,29 +325,31 @@ EndFunc;==>  ; Separate sheet which exceeds subfunction call
 ; ====================================================================================================================
 Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated or not
     Local $iWorksheets, _
-             $iLoopCount, _
-             $iSheet, _
-             $iRSCount
+            $iLoopCount, _
+            $iSheet, _
+            $iRSCount
     Local $aWorkSheetList
     Local $sSearchString, _
-              $sDirection, _
-              $sPreviousLoopSheet, _
-              $sPrevious, _
-              $sNext, _
-              $sCurrent
+            $sDirection, _
+            $sPreviousLoopSheet, _
+            $sPrevious, _
+            $sNext, _
+            $sCurrent
 
     $oExcel = _Excel_Open(False) ;Instantiatiate Excel application
     $oWorkbook = _Excel_BookOpen($oExcel, $xCellFile, True, False)
     $iWorksheets =$oWorkbook.worksheets.Count ;Worksheets count
     $aWorkSheetList =_Excel_SheetList($oWorkbook) ;Store
     $iLoopCount=0 ;loop counter
-     $iRSCount= _BE_jnkns_IsSepratedOrNot($xCellFile)
+    $iRSCount= _BE_jnkns_IsSepratedOrNot($xCellFile)
+    
     For $i =3 To ($iWorksheets-1)-$iRSCount
-         $iSheet =  _BE_jnknsGetArrayData($xCellFile,$i-$iLoopCount)
-         If $iSheet >= 41 And ($iWorksheets-$iRSCount)-1 > 5 Then;Check if Exceeds in  subfunction limit
-              $sPrevious = $aWorkSheetList[$i-2][0]
-              $sNext = $aWorkSheetList[$i][0]
-              $sCurrent =$aWorkSheetList[$i-1][0]
+        $iSheet =  _BE_jnknsGetArrayData($xCellFile,$i-$iLoopCount)
+        If $iSheet >= 41 And ($iWorksheets-$iRSCount)-1 > 5 Then;Check if Exceeds in  subfunction limit
+            $sPrevious = $aWorkSheetList[$i-2][0]
+            $sNext = $aWorkSheetList[$i][0]
+            $sCurrent =$aWorkSheetList[$i-1][0]
+    
             If $iLoopCount == 0 Then ;Check variable value for iteration number
                 If StringInStr($sCurrent, "IF") Then ;Check If current sheetname is main Sheet or IF sheet
                     $sSearchString= StringLeft($sCurrent,5)
@@ -353,6 +358,7 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     $sSearchString=$sCurrent
                     $sDirection=0
                 EndIf;==>;Check If current sheetname is main Sheet or IF sheet
+    
                 If $sDirection== 1 Then ;Condition   varies set to left direction set course
                     If StringInStr($sPrevious, $sSearchString) Then ;
                         _BE_jnknsSeparateSheet($xCellFile,$i, $i-1,$aWorkSheetList, $iLoopCount+1)
@@ -370,9 +376,9 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                         $iLoopCount +=1
                         ;MsgBox(0,"","Case3"&"Sheet"&$i+1&$i)
                     Else
-                         _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
-                          $iLoopCount +=1
-                         ; MsgBox(0,"","Case4"&"Sheet"&$i)
+                        _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
+                        $iLoopCount +=1
+                        ; MsgBox(0,"","Case4"&"Sheet"&$i)
                     EndIf ;===>Condition   varies set to left direction set course
                 EndIf
             Else
@@ -387,26 +393,26 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                         $sDirection=0 ;Set Direction parameter to Right  direction
                     EndIf;==>;Check If current sheetname is main Sheet or IF sheet
 
-                     If $sDirection== 1 Then ;Condition   varies set to left direction set course
+                    If $sDirection== 1 Then ;Condition   varies set to left direction set course
                         If StringInStr($sPrevious, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,$i-$iLoopCount, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
                             $iLoopCount +=1;===>
                             ;MsgBox(0,"","Case5"&"Sheet"&$i-$iLoopCount&($i-1)-$iLoopCount)
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
-                               _BE_jnknsSeparateSheet($xCellFile,0, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-                                 $iLoopCount +=1;===>Check if Previous string match within the search string
-                                ; MsgBox(0,"","Case6"&"Sheet"&($i-1)-$iLoopCount)
+                            _BE_jnknsSeparateSheet($xCellFile,0, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
+                            $iLoopCount +=1;===>Check if Previous string match within the search string
+                            ; MsgBox(0,"","Case6"&"Sheet"&($i-1)-$iLoopCount)
                         EndIf
 
                     ElseIf $sDirection==0 Then;Condition   varies set to right  direction
                         If StringInStr($sNext, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,($i+1)-$iLoopCount,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
                             ;MsgBox(0,"","Case7"&"Sheet"&($i+1)-$iLoopCount&$i-$iLoopCount)
-                             $iLoopCount +=1
+                            $iLoopCount +=1
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
                                 _BE_jnknsSeparateSheet($xCellFile,0,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-                                 ; MsgBox(0,"","Case8"&"Sheet"&$i-$iLoopCount)
-                                   $iLoopCount +=1
+                                ; MsgBox(0,"","Case8"&"Sheet"&$i-$iLoopCount)
+                                $iLoopCount +=1
                         EndIf
                     EndIf ;===>Condition   varies set to left direction set course
                 EndIf
@@ -418,7 +424,7 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                 _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
             EndIf
         EndIf;==>;Check if Exceeds in  subfunction limit
-          $sPreviousLoopSheet =$sCurrent ;Set value to current sheet in  loop
+        $sPreviousLoopSheet =$sCurrent ;Set value to current sheet in  loop
     Next;==>$iWorksheets
 EndFunc;==>;Decides whether the sheet needs to be separated or not
 
@@ -431,24 +437,24 @@ EndFunc;==>;Decides whether the sheet needs to be separated or not
 ; ================================================================================================================
 Func jnkns_BE_DeleteVar($xCellFile,$iSheetnum) ; Delete Var Of Excess Functions
     Local $oExcel, _
-             $oWorkbook
+            $oWorkbook
     Local $iLastCol, _
-             $iRangeLast, _
-             $iRows, _
-             $iCols, _
-             $iWorksheets, _
-             $iArrayNumCount, _
-             $iSubfuncCount, _
-             $aRawArray
+            $iRangeLast, _
+            $iRows, _
+            $iCols, _
+            $iWorksheets, _
+            $iArrayNumCount, _
+            $iSubfuncCount, _
+            $aRawArray
     Local $aSecArray[1][1000], _
-             $aElements[0], _
-             $aUniqElements[0], _
-             $aTempArrayStack[0][0], _
-             $aSheetList[0], _
-             $aIsSeparate[0], _
-              $aExcessFunc[1]
+            $aElements[0], _
+            $aUniqElements[0], _
+            $aTempArrayStack[0][0], _
+            $aSheetList[0], _
+            $aIsSeparate[0], _
+            $aExcessFunc[1]
     Local $sStrTypeValidator, _
-             $sStrSubfuncValidator
+            $sStrSubfuncValidator
 
     $oExcel = _Excel_Open(False)
     $oWorkbook = _Excel_BookOpen($oExcel, $xCellFile)
@@ -557,11 +563,11 @@ EndFunc
 ; ================================================================================================================
 Func _BE_GetXCellPath()
     Local $sTestSheetFile, _
-             $sDrive, _
-             $sDir, _
-             $sFileName, _
-             $sExtension, _
-             $sFile
+            $sDrive, _
+            $sDir, _
+            $sFileName, _
+            $sExtension, _
+            $sFile
     Local $oExcel
     Local $hTextFile
     Local $fTestDesign
@@ -581,7 +587,7 @@ EndFunc
 
 Func _BE_jnkns_SheetDelete($xCellFile,$iSheetnum)
     Local $oExcel, _
-              $oBook
+            $oBook
     $oExcel = _Excel_Open(False)
     $oBook = _Excel_BookOpen($oExcel,$xCellFile)
 
@@ -595,9 +601,9 @@ Func _BE_RunIFSheet($xCellFile)
             $fTestDesign
     Local $sExcelname
     Local $sDrive= "", _
-              $sDir = "", _
-              $sFileName = "", _
-               $sExtension = ""
+            $sDir = "", _
+            $sFileName = "", _
+            $sExtension = ""
     Local  $aPathSplit
 
     $oExcel=_Excel_Open(True)
@@ -607,11 +613,13 @@ Func _BE_RunIFSheet($xCellFile)
     $fTestDesign=_Excel_BookOpen ( $oExcel,$xCellFile )
     $aPathSplit= _PathSplit($xCellFile, $sDrive, $sDir, $sFileName, $sExtension)
     ;MsgBox(0,"",$sFileName&"-Excel")
-    WinActivate($sFileName&"-Excel")
+    ;WinActivate($sFileName&"-Excel")
+    Local $excelHwnd = WinGetHandle($sFileName&"-Excel")		; Sleep for 3 seconds
     Sleep(5000)
-    Send("^+s")
-     Sleep(15000)
-     _Excel_BookSave ( $fTestDesign )
+    ControlSend($excelHwnd,"","","^+s" )
+    ;end("^+s")
+    Sleep(15000)
+    _Excel_BookSave ( $fTestDesign )
     _Excel_Close($oExcel, True, True)
     while 1
         If ProcessExists("EXCEL.EXE") Then ExitLoop
@@ -624,8 +632,8 @@ EndFunc
 
 Func _BE_jnkns_IsSepratedOrNot($xCellFile)
     Local $iWorksheets, _
-                 $iLoopCount, _
-                 $iRSSheet
+            $iLoopCount, _
+            $iRSSheet
     Local $aWorkSheetList
 
     $iRSSheet =0
@@ -639,8 +647,8 @@ Func _BE_jnkns_IsSepratedOrNot($xCellFile)
                 $iRSSheet+=1
             EndIf
         Next
-       Return $iRSSheet
-      _Excel_BookClose($oWorkbook)
+    Return $iRSSheet
+    _Excel_BookClose($oWorkbook)
 ;~     If ($iWorksheets-$iRSSheet)== 4 Then
 ;~       For $i=3 To $iWorksheets-2
 ;~         jnkns_BE_DeleteVar($xCellFile,$i)
