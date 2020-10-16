@@ -75,6 +75,8 @@ $sStatus = StringTrimLeft($sStatus,8)
 
 
 _JMI_jnknsCallDSpider()
+_JMI_jnknsSpiderSettings()
+
 $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
 if _JMI_jnknsBuildTree($sTextClasses) Then
     $sSpider_Software_Path = ControlGetText('ソフトウェア単体テスト自動化ツール D-SPIDER  Ver.1.0.0',"",$g_iJM_Spider_Software_Path_Class)
@@ -83,11 +85,13 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
 EndIf
 
 Sleep(3000)
-_JEH_RefreshSettings($sSpider_Path )
+
+_JEH_RefreshSettings($sSpider_Path & '\')
 ;MsgBox(0,"",$sTestSheetFile)
-_JMI_jnknsPressF5($g_sJMI_Spider_Version)
 ;Send("{F5}")
-WinWait("","",10)
+_JMI_jnknsPressF5($g_sJMI_Spider_Version)
+;WinWait("","",10)
+Sleep(10000)
 $sSpider_Local = WinActivate($sSpider_Run_Class)
 While 1
     $sSpider_Local = WinActivate($sSpider_Run_Class)

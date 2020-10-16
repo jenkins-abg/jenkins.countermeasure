@@ -96,6 +96,7 @@ $iRebuildResult = 0
 
 ; Initialize FSUnit Title
 _JMI_jnknsCallDSpider()
+_JMI_jnknsSpiderSettings()
 ; Gets the information
 $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
 if _JMI_jnknsBuildTree($sTextClasses) Then
@@ -106,7 +107,7 @@ $sSpider_Log_TxtFile = @ScriptDir & '\..\Log.txt'
 If _JMI_jnknsReCheckIfError($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile) Then
 EndIf
 ; Log text constraints must satisfy the MCDC condition
-if $iErrNumber = 4 And $sStatus = "Pending" Then
+if $iErrNumber = 4 Then
 	$sTargetFunction = _StringBetween($sTestSheetFile, "【", "】", $STR_ENDNOTSTART)
     ; start logging of countermeasure
     _JPL_jnknsCreatelogfile('Ambiguous Error', $sTestSheetFile, 'Test : Ambiguous check...', 'Yes', "start")
@@ -127,6 +128,7 @@ if $iErrNumber = 4 And $sStatus = "Pending" Then
 					; Edit the software if backup is done
                     _JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Test : Creating Backup', 'Yes', "= Passed")
 					$iCopyResult = _JEH_EditFile ($aArray[$i], $sFix_Value)
+					_JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Editing variable in: ' & $aArray[$i] & ' changing variable name...' & $sFix_Value, 'Yes', "= Passed")
 				EndIf
 			EndIf
 		Next
@@ -137,7 +139,7 @@ if $iErrNumber = 4 And $sStatus = "Pending" Then
 		$iRebuildResult = _JEH_Rebuild_Software ($sSoftwarePath)
         _JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Test : Rebuilding Software', 'Yes', "= Passed")
 	EndIf
-    Sleep(200)
+    Sleep(2000)
     ; Refresh FSUnit Settings
     _JEH_RefreshSettings($sSoftwarePath & "\")
 	; Re-run the sheet
@@ -147,7 +149,7 @@ if $iErrNumber = 4 And $sStatus = "Pending" Then
 	$sSpider_Log_TxtFile = @ScriptDir & '\..\Log.txt'
     If _JMI_jnknsReCheckIfError($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile) Then
     EndIf
-    _JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Exiting countermeasure', 'Yes', 'End')
+		_JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Exiting countermeasure', 'Yes', 'End')
     Exit
 EndIf
 FileClose($hTextFile)
