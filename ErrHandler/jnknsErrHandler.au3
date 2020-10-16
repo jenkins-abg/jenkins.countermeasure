@@ -80,13 +80,13 @@ Func _JEH_jnknsCheckErrHandler($unitTest_ERRlog_txt, $spider_ERRlog_txt)
         ; Open the file for reading and store the handle to a variable.
         $hFileOpen = FileOpen($unitTest_ERRlog_txt, $FO_READ)
         If $hFileOpen = -1 Then
-            MsgBox($MB_SYSTEMMODAL, "", "An error occurred when reading the file.")
+            ;MsgBox($MB_SYSTEMMODAL, "", "An error occurred when reading the file.")
             Return False
         EndIf
         ; Read the contents of the file using the handle returned by FileOpen.
         $sFileRead = FileRead($hFileOpen)
         if Not _FileReadToArray($unitTest_ERRlog_txt,$sLine) Then
-            MsgBox(4096,"Error", " Error reading log to Array error:" & @error)
+            ;MsgBox(4096,"Error", " Error reading log to Array error:" & @error)
             Exit
         EndIf
         ; Looping all lines in the log txt
@@ -281,7 +281,8 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 				$sNewClass, _
 				$sMakeBat, _
 				$sMakeCommand, _
-				$sTextClasses
+				$sTextClasses, _
+				$sTrimPath
 
 	; Open cygwin process and check one instance only
 	if ProcessExists("mintty.exe") Then
@@ -289,7 +290,7 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 	endif
     Sleep(200)
 	Local $iMinty = Run("C:\cygwin\bin\mintty.exe -i /Cygwin-Terminal.ico -", "", @SW_SHOW, 0x8)
-    
+
     ; Loop check if cygwin window exists
     While 1
         if WinExists("~") Then
@@ -313,20 +314,20 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 		EndIf
         Sleep(1000)
     WEnd
-    
+
 	; Start of make clean process
 	; ========================================================
 	; Change Directory
     $sSoftwarePath = StringReplace($sSoftwarePath,"\", "/")
-    $sSoftwarePath = StringReplace($sSoftwarePath,":", "")
-    $sSoftwarePath = "/cygdrive/" & $sSoftwarePath
-    ClipPut($sSoftwarePath)
-    
+    $sTrimPath = StringReplace($sSoftwarePath,":", "")
+    $sTrimPath = "/cygdrive/" & $sTrimPath
+    ClipPut($sTrimPath)
+
     Local $minttyHwnd = WinGetHandle("[CLASS:mintty]", "")
 	;WinActivate("[CLASS:mintty]", "")
     Sleep(3000)
     ControlFocus($minttyHwnd,"","[CLASS:mintty]")																								; Sleep for 3 seconds
-    ControlSend($minttyHwnd,"","",'cd ' & $sSoftwarePath & "{ENTER}" )
+    ControlSend($minttyHwnd,"","",'cd ' & $sTrimPath & "{ENTER}" )
     ;Send('cd ' & $sSoftwarePath & "{ENTER}" )											; Change directory
 	;$sNewClass = WinGetTitle("[ACTIVE]")													; Get New Class after Change Directory
 	Sleep(3000)																								; Sleep for 3 seconds
@@ -351,7 +352,7 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
 	WEnd
 	; End of make clean process
     Sleep(2000)
-    
+
 	; Start of make processmake clean  > makeBuild_output_and_error
 	; ========================================================
 	; Check make.bat setting if factory or not
@@ -375,6 +376,7 @@ Func _JEH_Rebuild_Software ($sSoftwarePath)
         Sleep(1000)
 	WEnd
 	; End of build process
+	ProcessClose("mintty.exe")
     Sleep(2000)
     Return 1
 EndFunc		;==>_JEH_Rebuild_Software
@@ -389,19 +391,21 @@ Func _JEH_Check_OutPutFile($sOutputFile)
 	Local	$iRetOutputFile, _
 				$iFileSize, _
                 $iSize, _
-                $iGetFileSize
+                $iGetFileSize, _
+				$iGetLineCount
     Local   $handle
 
     $iSize = 0
 	$iRetOutputFile = 0
 	While (1)
         $iGetFileSize = FileGetSize($sOutputFile)
+		$iGetLineCount = _FileCountLines($sOutputFile)
         $iFileSize = FileReadToArray($sOutputFile)    ;  Array to store all lines in the file found
         $iLineCountB = @extended
-        ; Sleep for 30 seconds
-        Sleep(30000)
+        ; Sleep for 20 seconds
+        Sleep(20000)
 		; FileSize will be equal to size if done writing
-		If UBound($iFileSize) = $iSize And $iGetFileSize = FileGetSize($sOutputFile) Then
+		If UBound($iFileSize) = $iSize And $iGetLineCount = _FileCountLines($sOutputFile) Then
 			$iRetOutputFile = 1
 			ExitLoop
 		EndIf

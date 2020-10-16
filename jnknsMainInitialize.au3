@@ -316,35 +316,44 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	$sSpider_Log_TxtFile = @ScriptDir & '\Log.txt'
 	$hTestToolHandler = WinGetHandle($sSpiderTitle)
 	; Copy the test Design File
-	ClipPut($g_sJMI_TestDesign_File)
+	;ClipPut($g_sJMI_TestDesign_File)
 	; Send Keys
 	;Send("{ALT}")
 	;Send("{F}")
 	;Send("{T}")
 	;ControlSend($hTestToolHandler, "", "&F", "{T}")
-	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
+	;ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
 	; Wait for 1 second
-	Sleep(1000)
+	;Sleep(2000)
 	;WinWait("","",1)
 	; Pastes the copied test design file path
 	;Send("^v")
 	;Send("{ENTER}")
-	ControlSend($hTestToolHandler, "", "^v")
-	ControlSend($hTestToolHandler, "", "{ENTER}")
 
-	Sleep(5000)
+	;Local $tprjHwnd = WinGetHandle("テストブックを選択")
+	;$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
+	;ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
+	;ControlSend($tprjHwnd, "", "^v")
+	;ControlSend($tprjHwnd, "", "{ENTER}")
+	;Sleep(500)
 	;WinWait("","",5)
 	; Save the configuration of the DSpider
 	;Send("^s")
-	ControlSend($hTestToolHandler, "", "^s")
+	;ControlSend($tprjHwnd, "", "^s")
 	Sleep(5000)
 	;WinWait("","",5)
 	; Presses F5 in the DSpider Tool
 	ControlClick($sSpiderTitle,"",$sSpider_F5_Class)
 	Sleep(10000)
 	;WinWait("","",10)
-	$sSpider_Local = WinActivate($sSpider_Run_Class)
+	While (1)
+	  if WinExists($sSpider_Run_Class) Then
+		 ExitLoop
+	  EndIf
+	  WEnd
 
+	;$sSpider_Local = WinActivate($sSpider_Run_Class)
+	  $sSpider_Local = WinGetHandle($sSpider_Run_Class)
 	; Loop to wait until running of the tool is done
 	While 1
 		;$sSpider_Local = WinActivate($sSpider_Run_Class)

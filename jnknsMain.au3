@@ -62,10 +62,11 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
             $iFileCounter = $iFileCounter + 1
         EndIf
         Sleep(100)
-    Next
+	 Next
+
     If $iFileCounter > 0 Then
-        $retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
-        ;$retBuild =  1
+        ;$retBuild = _JEH_Rebuild_Software ($sSoftwarePath)
+        $retBuild =  1
     EndIf
     _JEH_RefreshSettings($sSoftwarePath & '\')
     If $initStatus = 1 Then
