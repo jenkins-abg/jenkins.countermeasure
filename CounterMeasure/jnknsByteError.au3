@@ -16,7 +16,7 @@
 #include <TreeViewConstants.au3>
 #include <WindowsConstants.au3>
 
-#include "..\Initializer.au3"
+#include "..\jnknsMainInitialize.au3"
 #include "..\TraceLog\jnknsProcessLogger.au3"
 
 ; Global Variables
@@ -46,7 +46,8 @@ Local	$aArray, _
 Local	$iBackUpResult, _
 			$iCopyResult, _
 			$iRebuildResult, _
-			$iErrNumber
+            $iErrNumber, _
+            $spiderHwnd
 
 Global  $g_JPL_txtfile = @ScriptDir & '\..\TraceLog\jenkins-trace-log.txt'
 Global $IsByteError
@@ -75,7 +76,10 @@ $sStatus = StringTrimLeft($sStatus,8)
 
 
 _JMI_jnknsCallDSpider()
+Sleep(2000)
 _JMI_jnknsSpiderSettings()
+
+$spiderHwnd = WinGetHandle($g_sJMI_Spider_Version)
 
 $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle($g_sJMI_Spider_Version))
 if _JMI_jnknsBuildTree($sTextClasses) Then
@@ -84,23 +88,26 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
     $sUnitTest_Log_TxtFile = $sSpider_Path & "\UnitTest\log.txt"
 EndIf
 
-Sleep(3000)
+Sleep(300)
 
-_JEH_RefreshSettings($sSpider_Path & '\')
+;_JEH_RefreshSettings($sSpider_Path & '\')
 ;MsgBox(0,"",$sTestSheetFile)
 ;Send("{F5}")
-_JMI_jnknsPressF5($g_sJMI_Spider_Version)
+;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
+ControlSend($spiderHwnd,"","",'{F5}')
+
 ;WinWait("","",10)
-Sleep(10000)
-$sSpider_Local = WinActivate($sSpider_Run_Class)
+Sleep(5000)
+Local $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
+;$sSpider_Local = WinActivate($sSpider_Run_Class)
 While 1
-    $sSpider_Local = WinActivate($sSpider_Run_Class)
-        if $sSpider_Local <> 0 Then
-        Else
-            ExitLoop
-        EndIf
+    $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
+    if $spiderLocalHwnd <> '0x00000000' Then
+        ExitLoop
+    EndIf
 WEnd
 Sleep(3000)
+
 checkError()
 
 If $IsByteError ==1 Then
@@ -112,18 +119,17 @@ If $IsByteError ==1 Then
     _JMI_jnknsCallDSpider()
     Sleep(3000)
     _JPL_jnknsCreatelogfile('Byte Error', "", 'Test : Separating Sheet', 'Yes', "= Passed")
-    _JEH_RefreshSettings($sSpider_Path  & '\')
-    _JMI_jnknsPressF5($g_sJMI_Spider_Version)
+    ;_JEH_RefreshSettings($sSpider_Path  & '\')
+    ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
     ;Send("{F5}")
     Sleep(10000)
     ;$sSpider_Local = WinActivate($sSpider_Run_Class)
-    Local $spiderHwnd = WinGetHandle($sSpider_Run_Class)
+    $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
 	While 1
-		$spiderHwnd = WinGetHandle($sSpider_Run_Class)
-            if $sSpider_Local <> 0 Then
-            Else
-                ExitLoop
-            EndIf
+		$spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
+        if $spiderLocalHwnd <> '0x00000000'  Then
+            ExitLoop
+        EndIf
     WEnd
     _JPL_jnknsCreatelogfile('Byte Error', "", 'Exiting countermeasure', 'Yes', 'End')
 EndIf
@@ -171,7 +177,7 @@ Func _BE_jnknsGetArrayData( $xCellFile,$iSheetnum)
             $iWorksheets, _
             $iArrayNumCount
     Local $aRawArray, _
-            $aSecArray[1][2000], _
+            $aSecArray[0][0], _
             $aElements[0], _
             $aUniqElements[0], _
             $aTempArrayStack[0][0], _
@@ -190,6 +196,7 @@ Func _BE_jnknsGetArrayData( $xCellFile,$iSheetnum)
     $iRows = UBound($aRawArray, $UBOUND_ROWS) ;Get number of rows stored into  $iRows
     $iCols = UBound($aRawArray, $UBOUND_COLUMNS);Get number of column stored into  $iCols
 
+    Redim $aSecArray[$iRows][$iCols]
 ;~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~  Loop on the Extracted Array and Check if consist subfunctions~~
 ;~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -281,7 +288,7 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
                 $sStringCount=StringLen($sStringAppend1);Get String Count of filename minus the file extension
         EndIf
         $sStringAppend2=StringTrimLeft($FtestDesign,$sStringCount); Set value of string 2 to concatenated string
-        $fNewSheet= $sStringAppend1&"No."&$iSheetnum& $sStringAppend2
+        $fNewSheet= $sStringAppend1&"_No."&$iSheetnum& $sStringAppend2
     Else ; Case Scenario if New Test Design
         If StringInStr($fTestDesign,"No.") Then
             $sStringAppend1 = StringTrimRight( $FtestDesign,17)
@@ -366,10 +373,12 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                 If $sDirection== 1 Then ;Condition   varies set to left direction set course
                     If StringInStr($sPrevious, $sSearchString) Then ;
                         _BE_jnknsSeparateSheet($xCellFile,$i, $i-1,$aWorkSheetList, $iLoopCount+1)
+                        _BE_RunIFSheet($xCellFile)
                         $iLoopCount +=1;===>
                         ;MsgBox(0,"","Case1"&"Sheet"&$i&$i-1)
                     Else
                         _BE_jnknsSeparateSheet($xCellFile,0, $i-1,$aWorkSheetList, $iLoopCount+1)
+                        _BE_RunIFSheet($xCellFile)
                         $iLoopCount +=1;===>
                         ;MsgBox(0,"","Case2"&"Sheet"&$i-1)
                     EndIf
@@ -377,10 +386,12 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                 ElseIf $sDirection==0 Then;Condition   varies set to right  direction
                     If StringInStr($sNext, $sSearchString) Then
                         _BE_jnknsSeparateSheet($xCellFile,$i+1,$i,$aWorkSheetList, $iLoopCount+1)
+                        _BE_RunIFSheet($xCellFile)
                         $iLoopCount +=1
                         ;MsgBox(0,"","Case3"&"Sheet"&$i+1&$i)
                     Else
                         _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
+                        _BE_RunIFSheet($xCellFile)
                         $iLoopCount +=1
                         ; MsgBox(0,"","Case4"&"Sheet"&$i)
                     EndIf ;===>Condition   varies set to left direction set course
@@ -400,10 +411,12 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     If $sDirection== 1 Then ;Condition   varies set to left direction set course
                         If StringInStr($sPrevious, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,$i-$iLoopCount, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
+                            _BE_RunIFSheet($xCellFile)
                             $iLoopCount +=1;===>
                             ;MsgBox(0,"","Case5"&"Sheet"&$i-$iLoopCount&($i-1)-$iLoopCount)
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
                             _BE_jnknsSeparateSheet($xCellFile,0, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
+                            _BE_RunIFSheet($xCellFile)
                             $iLoopCount +=1;===>Check if Previous string match within the search string
                             ; MsgBox(0,"","Case6"&"Sheet"&($i-1)-$iLoopCount)
                         EndIf
@@ -411,10 +424,12 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     ElseIf $sDirection==0 Then;Condition   varies set to right  direction
                         If StringInStr($sNext, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,($i+1)-$iLoopCount,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
+                            _BE_RunIFSheet($xCellFile)
                             ;MsgBox(0,"","Case7"&"Sheet"&($i+1)-$iLoopCount&$i-$iLoopCount)
                             $iLoopCount +=1
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
                                 _BE_jnknsSeparateSheet($xCellFile,0,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
+                                _BE_RunIFSheet($xCellFile)
                                 ; MsgBox(0,"","Case8"&"Sheet"&$i-$iLoopCount)
                                 $iLoopCount +=1
                         EndIf
@@ -426,6 +441,7 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
         ElseIf  $iSheet >= 41 And ($iWorksheets-$iRSCount)-1 == 4 Then ;IF Separated sheet needs additional countermeasure
             If StringInStr($aWorkSheetList[3][0],$aWorkSheetList[2][0])  Then
                 _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
+                _BE_RunIFSheet($xCellFile)
             EndIf
         EndIf;==>;Check if Exceeds in  subfunction limit
         $sPreviousLoopSheet =$sCurrent ;Set value to current sheet in  loop
@@ -618,7 +634,7 @@ Func _BE_RunIFSheet($xCellFile)
     $aPathSplit= _PathSplit($xCellFile, $sDrive, $sDir, $sFileName, $sExtension)
     ;MsgBox(0,"",$sFileName&"-Excel")
     ;WinActivate($sFileName&"-Excel")
-    Local $excelHwnd = WinGetHandle($sFileName&"-Excel")		; Sleep for 3 seconds
+    Local $excelHwnd = WinGetHandle($sFileName&" - Excel")		; Sleep for 3 seconds
     Sleep(5000)
     ControlSend($excelHwnd,"","","^+s" )
     ;end("^+s")
