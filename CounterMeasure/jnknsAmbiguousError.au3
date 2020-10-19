@@ -124,11 +124,11 @@ if $iErrNumber = 4 Then
 				Sleep(2000)
 				$iBackUpResult = _JEH_BackUpFile($aArray[$i], $sSoftwarePath, $aPathSplit[$PATH_FILENAME], $aPathSplit[$PATH_EXTENSION])
 				Sleep(2000)
-				if $iBackUpResult Then
+				if $iBackUpResult and (StringInStr ($aArray[$i], '_BAK') = 0 ) Then
 					; Edit the software if backup is done
                     _JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Test : Creating Backup', 'Yes', "= Passed")
 					$iCopyResult = _JEH_EditFile ($aArray[$i], $sFix_Value)
-					_JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Editing variable in: ' & $aArray[$i] & ' changing variable name...' & $sFix_Value, 'Yes', "= Passed")
+					_JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Editing variable in: ' & $aArray[$i] & ' changing variable name...' & $sFix_Value,'Yes', "STATUS : OK")
 				EndIf
 			EndIf
 		Next
@@ -137,7 +137,7 @@ if $iErrNumber = 4 Then
 	if $iCopyResult Then
 		; Rebuild Test Environment if copying of files is complete
 		$iRebuildResult = _JEH_Rebuild_Software ($sSoftwarePath)
-        _JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Test : Rebuilding Software', 'Yes', "= Passed")
+        ;_JPL_jnknsCreatelogfile('Ambiguous Error', "", 'Test : Rebuilding Software', 'Yes', "= Passed")
 	EndIf
     Sleep(2000)
     ; Refresh FSUnit Settings
