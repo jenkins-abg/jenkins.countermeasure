@@ -71,7 +71,7 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
     _JEH_RefreshSettings($sSoftwarePath & '\')
     If $initStatus = 1 Then
         If $retBuild = 1 Then
-            ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
+            _JMI_jnknsPressF5($g_sJMI_Spider_Version)
         EndIf
     EndIf
     if FileExists($spider_UnitLog_TxtFile) Then
