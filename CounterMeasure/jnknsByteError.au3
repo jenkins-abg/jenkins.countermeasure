@@ -50,6 +50,12 @@ Local	$iBackUpResult, _
             $spiderHwnd
 
 Global  $g_JPL_txtfile = @ScriptDir & '\..\TraceLog\jenkins-trace-log.txt'
+Global Enum $HAN_GUI, $HAN_TREE, $HAN_BTN, $HAN_BTN2, $HAN_COUNT
+Global		$g_iJM_Handles[$HAN_COUNT], _
+			$g_iJM_Spider_F5_Class , _							;	Class value depending in the AutoIt v3 Window info
+			$g_iJM_Spider_File_Class, _							;	Class value depending in the AutoIt v3 Window info
+			$g_iJM_Spider_Software_Path_Class , _		;	Class value depending in the AutoIt v3 Window info
+			$g_iJM_Spider_Run_Class							;	Class value depending in the AutoIt v3 Window info
 Global $IsByteError
 ; Open log text file
 $sTextFile = FileOpen($sLogTextFile, $FO_READ)
@@ -94,6 +100,7 @@ Sleep(300)
 ;MsgBox(0,"",$sTestSheetFile)
 ;Send("{F5}")
 ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
+#cs
 ControlSend($spiderHwnd,"","",'{F5}')
 
 ;WinWait("","",10)
@@ -107,7 +114,7 @@ While 1
     EndIf
 WEnd
 Sleep(3000)
-
+#ce
 checkError()
 
 If $IsByteError ==1 Then
@@ -272,10 +279,13 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
             $sStringAppend2
     Local $fNewSheet, _
             $fIFSheet
+			Local $ifcToolHwnd, $currWBHwnd, $ifcToolObook, $currWBoBook
+			Local $mynewWbdirve, $mynewWbDir, $mynewWbfname, $mynewWbext
 
-    $oExcel=_Excel_Open(False)
-    $oBook = _Excel_BookNew( $oExcel, 1 )
+    $oExcel=_Excel_Open()
+    $oBook = _Excel_BookNew( $oExcel)
     $oftestDesign = _Excel_BookOpen ( $oExcel, $ftestDesign )
+	$ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
 
     If StringInStr($fTestDesign, "Rev") Then ;Check String File as validation for Revision String
         If StringInStr($fTestDesign,"No.") Then
@@ -304,8 +314,56 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
 
     EndIf ;===>  ;Check String File as validation for Revision String
 
-    _Excel_BookSaveAs( $oBook, $fNewSheet, $xlWorkbookDefault, True )
-    $fNewSheet = _Excel_BookOpen ( $oExcel, $fNewSheet )
+   ; Create and Save to a new workbook
+	_Excel_BookSaveAs( $oBook, $fNewSheet, $xlWorkbookDefault, True )
+	;ShellExecute($fNewSheet)
+	_Excel_BookClose($fNewSheet)
+   Sleep(2000)
+	;reopen instance of the new workbook
+	Local $newTestSheet = _Excel_BookOpen($oExcel, $fNewSheet)
+
+	    _Excel_SheetCopyMove ( $oftestDesign, UBound($aArraySheets)-$iSheetnum, $newTestSheet, 1, True )
+    If $sheetindex<> 0 Then ; IF argument is set to default then  perform
+        _Excel_SheetCopyMove ( $oftestDesign, $sheetindex, $newTestSheet, 1, True )
+    EndIf
+    _Excel_SheetCopyMove ( $oftestDesign, $sheetindex2, $newTestSheet, 1, True )
+    _Excel_SheetCopyMove ( $oftestDesign, 2, $newTestSheet, 1, True )
+    _Excel_SheetCopyMove ( $oftestDesign, 1, $newTestSheet, 1, True )
+    _Excel_SheetDelete ( $newTestSheet, "Sheet1" )
+
+    ;$fNewSheet.Theme.ThemeColorScheme.Load ("C:\Program Files (x86)\Microsoft Office\Document Themes 16\Theme Colors\Office 2007 - 2010.xml")
+    ;_Excel_Close ( $newTestSheet )
+
+
+
+
+   _PathSplit($fNewSheet, $mynewWbdirve, $mynewWbDir, $mynewWbfname, $mynewWbext)
+   ;_PathSplit($ftestDesign, $mynewWbdirve, $mynewWbDir, $mynewWbfname, $mynewWbext)
+MsgBox(0,"",$mynewWbfname)
+	  local $trhwnd = WinGetHandle($mynewWbfname)
+
+
+   $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+   ;$currWBHwnd =  WinGetHandle($mynewWbfname)
+
+   ;MsgBox(0,"",$ifcToolHwnd)
+  ; MsgBox(0,"",$currWBHwnd)
+   ControlSend($trhwnd,"","","^+s")
+
+	  ;MsgBox(0,"","$fNewSheet: " & $trhwnd & "      $ftestDesign: " & WinGetHandle($mynewWbfname))
+	;_Excel_BookClose ( $oftestDesign, False )
+
+	;_Excel_BookClose ( $newTestSheet, True )
+
+	;_Excel_Close($oExcel)
+
+	;MsgBox(0,"","CHECK")
+
+#cs
+
+
+    _Excel_BookOpen ( $oExcel, $fNewSheet )
+
     _Excel_SheetCopyMove ( $oftestDesign, UBound($aArraySheets)-$iSheetnum, $fNewSheet, 1, True )
     If $sheetindex<> 0 Then ; IF argument is set to default then  perform
         _Excel_SheetCopyMove ( $oftestDesign, $sheetindex, $fNewSheet, 1, True )
@@ -315,10 +373,39 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     _Excel_SheetCopyMove ( $oftestDesign, 1, $fNewSheet, 1, True )
     _Excel_SheetDelete ( $fNewSheet, "Sheet1" )
 
-    $fNewSheet.Theme.ThemeColorScheme.Load ("C:\Program Files (x86)\Microsoft Office\Document Themes 16\Theme Colors\Office 2007 - 2010.xml")
+    ;$fNewSheet.Theme.ThemeColorScheme.Load ("C:\Program Files (x86)\Microsoft Office\Document Themes 16\Theme Colors\Office 2007 - 2010.xml")
 ;~     WinActivate
-    _Excel_BookClose ( $ftestDesign )
-    _Excel_BookClose ( $fNewSheet )
+
+
+    _Excel_Close ( $ftestDesign )
+    _Excel_Close ( $fNewSheet )
+
+
+
+	#cs
+
+
+
+   Local $oExcel = _Excel_Open()
+   _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+   _Excel_BookOpen ( $oExcel, "C:\work\Jenkins\SW_TEST\BYTE_ERROR\40StubError\【diagcan_ridcmd.c】SUT_Design_Reports_Rev2.00.xlsx")
+
+   $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+   $currWBHwnd =  WinGetHandle("【diagcan_ridcmd.c】SUT_Design_Reports_Rev2.00.xlsx")
+   ControlSend($currWBHwnd,"","","^+s")
+
+	#ce
+#ce
+
+	; Open new separated workbook
+	; Open IFC Tool
+   ;_Excel_BookOpen($oExcel, $fNewSheet)
+
+   MsgBox(0,"","CHECK out")
+
+	_Excel_BookClose ( $oftestDesign, False )
+	_Excel_BookClose ( @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" , False )
+       _Excel_BookClose ( $fNewSheet )
     _Excel_Close($oExcel)
     If $sheetindex >=3 Then
         _BE_jnkns_SheetDelete($ftestDesign,$sheetindex )
@@ -326,6 +413,7 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     If $sheetindex2 >=3 Then
         _BE_jnkns_SheetDelete($ftestDesign,$sheetindex2 )
     EndIf
+
 EndFunc;==>  ; Separate sheet which exceeds subfunction call
 
 ; #INTERNAL_USE_ONLY# ================================================================================================
@@ -353,14 +441,14 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
     $aWorkSheetList =_Excel_SheetList($oWorkbook) ;Store
     $iLoopCount=0 ;loop counter
     $iRSCount= _BE_jnkns_IsSepratedOrNot($xCellFile)
-    
+
     For $i =3 To ($iWorksheets-1)-$iRSCount
         $iSheet =  _BE_jnknsGetArrayData($xCellFile,$i-$iLoopCount)
         If $iSheet >= 41 And ($iWorksheets-$iRSCount)-1 > 5 Then;Check if Exceeds in  subfunction limit
             $sPrevious = $aWorkSheetList[$i-2][0]
             $sNext = $aWorkSheetList[$i][0]
             $sCurrent =$aWorkSheetList[$i-1][0]
-    
+
             If $iLoopCount == 0 Then ;Check variable value for iteration number
                 If StringInStr($sCurrent, "IF") Then ;Check If current sheetname is main Sheet or IF sheet
                     $sSearchString= StringLeft($sCurrent,5)
@@ -369,16 +457,15 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     $sSearchString=$sCurrent
                     $sDirection=0
                 EndIf;==>;Check If current sheetname is main Sheet or IF sheet
-    
+
                 If $sDirection== 1 Then ;Condition   varies set to left direction set course
                     If StringInStr($sPrevious, $sSearchString) Then ;
                         _BE_jnknsSeparateSheet($xCellFile,$i, $i-1,$aWorkSheetList, $iLoopCount+1)
-                        _BE_RunIFSheet($xCellFile)
                         $iLoopCount +=1;===>
                         ;MsgBox(0,"","Case1"&"Sheet"&$i&$i-1)
                     Else
                         _BE_jnknsSeparateSheet($xCellFile,0, $i-1,$aWorkSheetList, $iLoopCount+1)
-                        _BE_RunIFSheet($xCellFile)
+
                         $iLoopCount +=1;===>
                         ;MsgBox(0,"","Case2"&"Sheet"&$i-1)
                     EndIf
@@ -386,12 +473,12 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                 ElseIf $sDirection==0 Then;Condition   varies set to right  direction
                     If StringInStr($sNext, $sSearchString) Then
                         _BE_jnknsSeparateSheet($xCellFile,$i+1,$i,$aWorkSheetList, $iLoopCount+1)
-                        _BE_RunIFSheet($xCellFile)
+
                         $iLoopCount +=1
                         ;MsgBox(0,"","Case3"&"Sheet"&$i+1&$i)
                     Else
                         _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
-                        _BE_RunIFSheet($xCellFile)
+
                         $iLoopCount +=1
                         ; MsgBox(0,"","Case4"&"Sheet"&$i)
                     EndIf ;===>Condition   varies set to left direction set course
@@ -411,12 +498,12 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     If $sDirection== 1 Then ;Condition   varies set to left direction set course
                         If StringInStr($sPrevious, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,$i-$iLoopCount, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-                            _BE_RunIFSheet($xCellFile)
+
                             $iLoopCount +=1;===>
                             ;MsgBox(0,"","Case5"&"Sheet"&$i-$iLoopCount&($i-1)-$iLoopCount)
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
                             _BE_jnknsSeparateSheet($xCellFile,0, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-                            _BE_RunIFSheet($xCellFile)
+
                             $iLoopCount +=1;===>Check if Previous string match within the search string
                             ; MsgBox(0,"","Case6"&"Sheet"&($i-1)-$iLoopCount)
                         EndIf
@@ -424,12 +511,12 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     ElseIf $sDirection==0 Then;Condition   varies set to right  direction
                         If StringInStr($sNext, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,($i+1)-$iLoopCount,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-                            _BE_RunIFSheet($xCellFile)
+
                             ;MsgBox(0,"","Case7"&"Sheet"&($i+1)-$iLoopCount&$i-$iLoopCount)
                             $iLoopCount +=1
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
                                 _BE_jnknsSeparateSheet($xCellFile,0,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-                                _BE_RunIFSheet($xCellFile)
+
                                 ; MsgBox(0,"","Case8"&"Sheet"&$i-$iLoopCount)
                                 $iLoopCount +=1
                         EndIf
