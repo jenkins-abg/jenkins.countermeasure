@@ -592,22 +592,42 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	$toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
     Sleep(2000)
 
-    ClipPut($g_sJMI_TestDesign_File)
 
-    ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
-    ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
-    Sleep(2000)                                         ; Delay to get the class of the pop-up item
 
-	$tprjHwnd = WinGetHandle("テストブックを選択")
-	$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
+    ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
+    if $IsByteError = 1 Then
+        for $i = 0 to $NewSheetsCounter
+            ClipPut($SheetsArr[$i])
 
-	ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
-    ControlSend($tprjHwnd, "", "", "^v")
-    ControlSend($tprjHwnd, "", "", "{ENTER}")
-	Sleep(200)
-    ControlSend($toolHwnd,"","","^s")
+            ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
+            ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
+            Sleep(2000)                                         ; Delay to get the class of the pop-up item
+        
+            $tprjHwnd = WinGetHandle("テストブックを選択")
+            $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
+
+            ControlSend($tprjHwnd, "", "", "^v")
+            ControlSend($tprjHwnd, "", "", "{ENTER}")
+            Sleep(200)
+            ControlSend($toolHwnd,"","","^s")
+        next
+    Else
+        ClipPut($g_sJMI_TestDesign_File)
+
+        ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
+        ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
+        Sleep(2000)                                         ; Delay to get the class of the pop-up item
+    
+        $tprjHwnd = WinGetHandle("テストブックを選択")
+        $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
+
+        ControlSend($tprjHwnd, "", "", "^v")
+        ControlSend($tprjHwnd, "", "", "{ENTER}")
+        Sleep(200)
+        ControlSend($toolHwnd,"","","^s")
+    EndIf
+
     Sleep(2000)
-
 EndFunc		; ==>_JEH_RefreshSettings
 
 ; #FUNCTION# ===========================================================================================================

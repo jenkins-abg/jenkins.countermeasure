@@ -57,6 +57,8 @@ Global		$g_iJM_Handles[$HAN_COUNT], _
 			$g_iJM_Spider_Software_Path_Class , _		;	Class value depending in the AutoIt v3 Window info
 			$g_iJM_Spider_Run_Class							;	Class value depending in the AutoIt v3 Window info
 Global $IsByteError
+Global $NewSheetsCounter, $SheetsArr[]
+
 ; Open log text file
 $sTextFile = FileOpen($sLogTextFile, $FO_READ)
 ; Initialization of variables required
@@ -80,7 +82,7 @@ $sFix_Value = StringTrimLeft($sFix_Value,13)
 $sStatus = FileReadLine($sTextFile,4)
 $sStatus = StringTrimLeft($sStatus,8)
 
-
+$NewSheetsCounter = 0
 _JMI_jnknsCallDSpider()
 Sleep(2000)
 _JMI_jnknsSpiderSettings()
@@ -96,28 +98,14 @@ EndIf
 
 Sleep(300)
 
-;_JEH_RefreshSettings($sSpider_Path & '\')
-;MsgBox(0,"",$sTestSheetFile)
+_JEH_RefreshSettings($sSpider_Path & '\')
 ;Send("{F5}")
 ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
-#cs
-ControlSend($spiderHwnd,"","",'{F5}')
 
-;WinWait("","",10)
-Sleep(5000)
-Local $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
-;$sSpider_Local = WinActivate($sSpider_Run_Class)
-While 1
-    $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
-    if $spiderLocalHwnd <> '0x00000000' Then
-        ExitLoop
-    EndIf
-WEnd
 Sleep(3000)
-#ce
 checkError()
 
-If $IsByteError ==1 Then
+If $IsByteError == 1 Then
     _JPL_jnknsCreatelogfile('Byte Error', $sTestSheetFile, 'Test : ByteError check...', 'Yes', "start")
 
     Sleep(10000)
@@ -148,25 +136,22 @@ Func checkError()
     Local $hTextFile
     Local $iLine
 
-    $sLogfile=StringTrimRight($sTprjPath, 20)
-    $sLogfile&="UnitTest\log.txt"
-    $hTextFile=FileOpen($sLogfile,$FO_READ)
-    $iLine=FileReadLine($hTextFile,7)
+    $sLogfile = StringTrimRight($sTprjPath, 20)
+    $sLogfile &= "UnitTest\log.txt"
+    $hTextFile = FileOpen($sLogfile,$FO_READ)
+    $iLine = FileReadLine($hTextFile,7)
     If StringInStr($iLine, "スタブ関数の数が最大値(40)を超えました。")  Then
-        $IsByteError=1
+        $IsByteError = 1
         _BE_jnknsMain( _BE_GetXCellPath())
-        ;  MsgBox(0,"","Test1")
     ElseIf StringInStr($iLine, "スタブ機能のメモリ使用量が最大値(4096 byte)を超えました。")  Then
-        $IsByteError=1
+        $IsByteError = 1
         _BE_jnknsMain( _BE_GetXCellPath())
     Else
         _JPL_jnknsCreatelogfile('Byte Error', "", 'Test : '&$iLine &' Error Detected ', 'Yes', "= Failed") ; Insert into log file if different error exist.
         $IsByteError=0
-        ;MsgBox(0,"","Test2")
     EndIf
     FileClose($hTextFile)
 EndFunc
-
 
 ; #INTERNAL_USE_ONLY# ================================================================================================
 ; Name...........: _BE_jnknsGetArrayData
@@ -279,8 +264,10 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
             $sStringAppend2
     Local $fNewSheet, _
             $fIFSheet
-			Local $ifcToolHwnd, $currWBHwnd, $ifcToolObook, $currWBoBook
-			Local $mynewWbdirve, $mynewWbDir, $mynewWbfname, $mynewWbext
+    Local $ifcToolHwnd, $ifcToolObook
+	Local $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext
+    Local $oNewWB
+    Local $oNewWBhandler
 
     $oExcel=_Excel_Open()
     $oBook = _Excel_BookNew( $oExcel)
@@ -314,99 +301,40 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
 
     EndIf ;===>  ;Check String File as validation for Revision String
 
-   ; Create and Save to a new workbook
+    ; Create new workbook, save and close it
 	_Excel_BookSaveAs( $oBook, $fNewSheet, $xlWorkbookDefault, True )
-	;ShellExecute($fNewSheet)
 	_Excel_BookClose($fNewSheet)
-   Sleep(2000)
-	;reopen instance of the new workbook
-	Local $newTestSheet = _Excel_BookOpen($oExcel, $fNewSheet)
+    Sleep(2000)
 
-	    _Excel_SheetCopyMove ( $oftestDesign, UBound($aArraySheets)-$iSheetnum, $newTestSheet, 1, True )
+	; Reopen instance of the new workbook
+	Local $oNewWB = _Excel_BookOpen($oExcel, $fNewSheet)
+
+    ; Move sheets from the current test design to the new workbook
+	_Excel_SheetCopyMove ( $oftestDesign, UBound($aArraySheets)-$iSheetnum, $oNewWB, 1, True )
     If $sheetindex<> 0 Then ; IF argument is set to default then  perform
-        _Excel_SheetCopyMove ( $oftestDesign, $sheetindex, $newTestSheet, 1, True )
+        _Excel_SheetCopyMove ( $oftestDesign, $sheetindex, $oNewWB, 1, True )
     EndIf
-    _Excel_SheetCopyMove ( $oftestDesign, $sheetindex2, $newTestSheet, 1, True )
-    _Excel_SheetCopyMove ( $oftestDesign, 2, $newTestSheet, 1, True )
-    _Excel_SheetCopyMove ( $oftestDesign, 1, $newTestSheet, 1, True )
-    _Excel_SheetDelete ( $newTestSheet, "Sheet1" )
+    _Excel_SheetCopyMove ( $oftestDesign, $sheetindex2, $oNewWB, 1, True )
+    _Excel_SheetCopyMove ( $oftestDesign, 2, $oNewWB, 1, True )
+    _Excel_SheetCopyMove ( $oftestDesign, 1, $oNewWB, 1, True )
+    _Excel_SheetDelete ( $oNewWB, "Sheet1" )
 
-    ;$fNewSheet.Theme.ThemeColorScheme.Load ("C:\Program Files (x86)\Microsoft Office\Document Themes 16\Theme Colors\Office 2007 - 2010.xml")
-    ;_Excel_Close ( $newTestSheet )
+    ; Get the file name of the new workbook
+    _PathSplit($fNewSheet, $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext)
 
+    ; Get Window handler of the new workbook and IFC tool
+	$oNewWBhandler = WinGetHandle($oNewWBfname)
+    $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
 
+    ; call MACRO
+    ControlSend($oNewWBhandler,"","","^+s")
 
-
-   _PathSplit($fNewSheet, $mynewWbdirve, $mynewWbDir, $mynewWbfname, $mynewWbext)
-   ;_PathSplit($ftestDesign, $mynewWbdirve, $mynewWbDir, $mynewWbfname, $mynewWbext)
-MsgBox(0,"",$mynewWbfname)
-	  local $trhwnd = WinGetHandle($mynewWbfname)
-
-
-   $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
-   ;$currWBHwnd =  WinGetHandle($mynewWbfname)
-
-   ;MsgBox(0,"",$ifcToolHwnd)
-  ; MsgBox(0,"",$currWBHwnd)
-   ControlSend($trhwnd,"","","^+s")
-
-	  ;MsgBox(0,"","$fNewSheet: " & $trhwnd & "      $ftestDesign: " & WinGetHandle($mynewWbfname))
-	;_Excel_BookClose ( $oftestDesign, False )
-
-	;_Excel_BookClose ( $newTestSheet, True )
-
-	;_Excel_Close($oExcel)
-
-	;MsgBox(0,"","CHECK")
-
-#cs
-
-
-    _Excel_BookOpen ( $oExcel, $fNewSheet )
-
-    _Excel_SheetCopyMove ( $oftestDesign, UBound($aArraySheets)-$iSheetnum, $fNewSheet, 1, True )
-    If $sheetindex<> 0 Then ; IF argument is set to default then  perform
-        _Excel_SheetCopyMove ( $oftestDesign, $sheetindex, $fNewSheet, 1, True )
-    EndIf
-    _Excel_SheetCopyMove ( $oftestDesign, $sheetindex2, $fNewSheet, 1, True )
-    _Excel_SheetCopyMove ( $oftestDesign, 2, $fNewSheet, 1, True )
-    _Excel_SheetCopyMove ( $oftestDesign, 1, $fNewSheet, 1, True )
-    _Excel_SheetDelete ( $fNewSheet, "Sheet1" )
-
-    ;$fNewSheet.Theme.ThemeColorScheme.Load ("C:\Program Files (x86)\Microsoft Office\Document Themes 16\Theme Colors\Office 2007 - 2010.xml")
-;~     WinActivate
-
-
-    _Excel_Close ( $ftestDesign )
-    _Excel_Close ( $fNewSheet )
-
-
-
-	#cs
-
-
-
-   Local $oExcel = _Excel_Open()
-   _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
-   _Excel_BookOpen ( $oExcel, "C:\work\Jenkins\SW_TEST\BYTE_ERROR\40StubError\【diagcan_ridcmd.c】SUT_Design_Reports_Rev2.00.xlsx")
-
-   $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
-   $currWBHwnd =  WinGetHandle("【diagcan_ridcmd.c】SUT_Design_Reports_Rev2.00.xlsx")
-   ControlSend($currWBHwnd,"","","^+s")
-
-	#ce
-#ce
-
-	; Open new separated workbook
-	; Open IFC Tool
-   ;_Excel_BookOpen($oExcel, $fNewSheet)
-
-   MsgBox(0,"","CHECK out")
-
+    ; Close all excel instance
 	_Excel_BookClose ( $oftestDesign, False )
-	_Excel_BookClose ( @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" , False )
-       _Excel_BookClose ( $fNewSheet )
+	_Excel_BookClose ( @ScriptDir & "\Tools\UT Step1 - IFC Tool.xlsm" , False )
+    _Excel_BookClose ( $fNewSheet )
     _Excel_Close($oExcel)
+
     If $sheetindex >=3 Then
         _BE_jnkns_SheetDelete($ftestDesign,$sheetindex )
     EndIf
@@ -414,6 +342,8 @@ MsgBox(0,"",$mynewWbfname)
         _BE_jnkns_SheetDelete($ftestDesign,$sheetindex2 )
     EndIf
 
+    $SheetsArr[$NewSheetsCounter] = $fNewSheet
+    $NewSheetsCounter = $NewSheetsCounter + 1
 EndFunc;==>  ; Separate sheet which exceeds subfunction call
 
 ; #INTERNAL_USE_ONLY# ================================================================================================
@@ -437,9 +367,9 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
 
     $oExcel = _Excel_Open(False) ;Instantiatiate Excel application
     $oWorkbook = _Excel_BookOpen($oExcel, $xCellFile, True, False)
-    $iWorksheets =$oWorkbook.worksheets.Count ;Worksheets count
-    $aWorkSheetList =_Excel_SheetList($oWorkbook) ;Store
-    $iLoopCount=0 ;loop counter
+    $iWorksheets = $oWorkbook.worksheets.Count ;Worksheets count
+    $aWorkSheetList = _Excel_SheetList($oWorkbook) ;Store
+    $iLoopCount = 0 ;loop counter
     $iRSCount= _BE_jnkns_IsSepratedOrNot($xCellFile)
 
     For $i =3 To ($iWorksheets-1)-$iRSCount
@@ -465,7 +395,6 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                         ;MsgBox(0,"","Case1"&"Sheet"&$i&$i-1)
                     Else
                         _BE_jnknsSeparateSheet($xCellFile,0, $i-1,$aWorkSheetList, $iLoopCount+1)
-
                         $iLoopCount +=1;===>
                         ;MsgBox(0,"","Case2"&"Sheet"&$i-1)
                     EndIf
@@ -473,12 +402,10 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                 ElseIf $sDirection==0 Then;Condition   varies set to right  direction
                     If StringInStr($sNext, $sSearchString) Then
                         _BE_jnknsSeparateSheet($xCellFile,$i+1,$i,$aWorkSheetList, $iLoopCount+1)
-
                         $iLoopCount +=1
                         ;MsgBox(0,"","Case3"&"Sheet"&$i+1&$i)
                     Else
                         _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
-
                         $iLoopCount +=1
                         ; MsgBox(0,"","Case4"&"Sheet"&$i)
                     EndIf ;===>Condition   varies set to left direction set course
@@ -498,12 +425,10 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     If $sDirection== 1 Then ;Condition   varies set to left direction set course
                         If StringInStr($sPrevious, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,$i-$iLoopCount, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-
                             $iLoopCount +=1;===>
                             ;MsgBox(0,"","Case5"&"Sheet"&$i-$iLoopCount&($i-1)-$iLoopCount)
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
                             _BE_jnknsSeparateSheet($xCellFile,0, ($i-1)-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-
                             $iLoopCount +=1;===>Check if Previous string match within the search string
                             ; MsgBox(0,"","Case6"&"Sheet"&($i-1)-$iLoopCount)
                         EndIf
@@ -511,12 +436,10 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
                     ElseIf $sDirection==0 Then;Condition   varies set to right  direction
                         If StringInStr($sNext, $sSearchString) Then
                             _BE_jnknsSeparateSheet($xCellFile,($i+1)-$iLoopCount,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-
                             ;MsgBox(0,"","Case7"&"Sheet"&($i+1)-$iLoopCount&$i-$iLoopCount)
                             $iLoopCount +=1
                         Else ;IF it deals with no IF Sheet only main sheet will be separate
                                 _BE_jnknsSeparateSheet($xCellFile,0,$i-$iLoopCount,$aWorkSheetList, $iLoopCount+1)
-
                                 ; MsgBox(0,"","Case8"&"Sheet"&$i-$iLoopCount)
                                 $iLoopCount +=1
                         EndIf
@@ -536,7 +459,7 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
 EndFunc;==>;Decides whether the sheet needs to be separated or not
 
 ; #INTERNAL_USE_ONLY# ================================================================================================
-; Name...........: _BE_jnknsSeparateSheet
+; Name...........: jnkns_BE_DeleteVar
 ; Description ...:Delete VAR on the excel cells that exceeds subfunctions limit
 ; Author/s ........: rdbayanado
 ;                ........: cjhernandez
@@ -565,10 +488,10 @@ Func jnkns_BE_DeleteVar($xCellFile,$iSheetnum) ; Delete Var Of Excess Functions
 
     $oExcel = _Excel_Open(False)
     $oWorkbook = _Excel_BookOpen($oExcel, $xCellFile)
-    $iWorksheets=$oWorkbook.Worksheets.Count
-    $aSheetList=_Excel_SheetList($oWorkbook)
+    $iWorksheets = $oWorkbook.Worksheets.Count
+    $aSheetList = _Excel_SheetList($oWorkbook)
     $iRangeLast = $oWorkbook.Worksheets($iSheetnum).UsedRange.SpecialCells($xlCellTypeLastCell)
-    $iLastCol=_Excel_ColumnToLetter($iRangeLast.Column)
+    $iLastCol = _Excel_ColumnToLetter($iRangeLast.Column)
     $aRawArray = _Excel_RangeRead( $oWorkbook, $iSheetnum, "E27:"&$iLastCol&"27")
     $iRows = UBound($aRawArray, $UBOUND_ROWS)
     $iCols = UBound($aRawArray, $UBOUND_COLUMNS)
@@ -580,9 +503,9 @@ Func jnkns_BE_DeleteVar($xCellFile,$iSheetnum) ; Delete Var Of Excess Functions
             For $j = 0 To $iCols - 1;  Loop on column
                 $sStrSubfuncValidator= StringInStr($aRawArray[$i][$j],")")
                 If ($sStrSubfuncValidator<>0 ) Then ;Validate array element if argument or subfunction type
-                    $sStrValidator=StringMid($aRawArray[$i][$j], $sStrSubfuncValidator+1,1)
+                    $sStrValidator = StringMid($aRawArray[$i][$j], $sStrSubfuncValidator+1,1)
                     If $sStrValidator == "@" Then;Check subfunction type
-                        $aSecArray[$i][$j]=StringTrimLeft($aRawArray[$i][$j],$sStrSubfuncValidator +1)
+                        $aSecArray[$i][$j] = StringTrimLeft($aRawArray[$i][$j],$sStrSubfuncValidator +1)
                     ; Check if its a argument of subfunction
                     ElseIf $sStrValidator == "[" Then
                         $aSecArray[$i][$j]=$aRawArray[$i][$j] ;Append to Array subset
@@ -598,9 +521,9 @@ Func jnkns_BE_DeleteVar($xCellFile,$iSheetnum) ; Delete Var Of Excess Functions
             For $j = 0 To $iCols - 1
                 If $j<>0 Then
                     If  $aSecArray[$i][$j] <> $aSecArray[$i][$j-1] And  $aSecArray[$i][$j] <> " "  Then; Check if element is the same as its preceeding element
-                        $sStrValidator= StringInStr($aSecArray[$i][$j],"@") ;Check subfunc attributes
+                        $sStrValidator = StringInStr($aSecArray[$i][$j],"@") ;Check subfunc attributes
                         If $sStrValidator <>0 Then;Check if subfunction attributes
-                            $aSecArray[$i][$j]=StringTrimLeft( $aSecArray[$i][$j],$sStrValidator)
+                            $aSecArray[$i][$j] = StringTrimLeft( $aSecArray[$i][$j],$sStrValidator)
                             If  $aSecArray[$i][$j] <> $aSecArray[$i][$j-1] And $aSecArray[$i][$j] <> " "  Then ;Check if same element as the previous one
                                 If StringLen ($aSecArray[$i][$j]) <> 0 Then; Check if an empty string
                                     _ArrayAdd($aElements, $aSecArray[$i][$j]);Append to $aElements as unique
@@ -627,17 +550,17 @@ Func jnkns_BE_DeleteVar($xCellFile,$iSheetnum) ; Delete Var Of Excess Functions
             EndIf
         Next
         For $i =40 To UBound($aUniqElements) -1 ;Loop to Elements of $aUniqElements
-            $iSubfuncCount= UBound($aUniqElements) -1
-            If $iSubfuncCount  >=40 Then ; Check if it exceeds the byte limit range
+            $iSubfuncCount = UBound($aUniqElements) -1
+            If $iSubfuncCount >=40 Then ; Check if it exceeds the byte limit range
                 _ArrayAdd( $aExcessFunc, $aUniqElements[$i]); Append values to Excess functions Array
             EndIf
 
         Next;===>;Loop to Elements of $aUniqElements
         For $i = 0 To $iRows -1 ;Loop through rows
-            For $j =0 To $iCols -1 ;Loop through columns
-                For $a =0 To  UBound($aExcessFunc) -1 ;Loop within the elements of  $aExcessFunc
+            For $j = 0 To $iCols -1 ;Loop through columns
+                For $a = 0 To  UBound($aExcessFunc) -1 ;Loop within the elements of  $aExcessFunc
                     If StringInStr($aRawArray[$i][$j], $aExcessFunc[$a]) Then  ; Get all the position of indexes  of $aRawArray matched within the  aExcessFunc array
-                        Local $test=_Excel_RangeWrite($oWorkbook, $oWorkbook.Worksheets($iSheetnum), "", _Excel_ColumnToLetter($j+5)&"28") ;Convert array indexes of $aRawArray to cell location
+                        Local $test = _Excel_RangeWrite($oWorkbook, $oWorkbook.Worksheets($iSheetnum), "", _Excel_ColumnToLetter($j+5)&"28") ;Convert array indexes of $aRawArray to cell location
                     EndIf;===>Get all the position of indexes  of $aRawArray matched within the  aExcessFunc array
                 Next
             Next;===> ;Loop through rows
@@ -715,10 +638,10 @@ Func _BE_RunIFSheet($xCellFile)
 
     $oExcel=_Excel_Open(True)
 
-    $fIFSheet =_Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+    $fIFSheet = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
     Sleep(7000)
-    $fTestDesign=_Excel_BookOpen ( $oExcel,$xCellFile )
-    $aPathSplit= _PathSplit($xCellFile, $sDrive, $sDir, $sFileName, $sExtension)
+    $fTestDesign = _Excel_BookOpen ( $oExcel,$xCellFile )
+    $aPathSplit = _PathSplit($xCellFile, $sDrive, $sDir, $sFileName, $sExtension)
     ;MsgBox(0,"",$sFileName&"-Excel")
     ;WinActivate($sFileName&"-Excel")
     Local $excelHwnd = WinGetHandle($sFileName&" - Excel")		; Sleep for 3 seconds
@@ -735,7 +658,6 @@ Func _BE_RunIFSheet($xCellFile)
     Sleep(1000)
 
 EndFunc
-
 
 Func _BE_jnkns_IsSepratedOrNot($xCellFile)
     Local $iWorksheets, _
