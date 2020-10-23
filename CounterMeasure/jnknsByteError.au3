@@ -57,7 +57,7 @@ Global		$g_iJM_Handles[$HAN_COUNT], _
 			$g_iJM_Spider_Software_Path_Class , _		;	Class value depending in the AutoIt v3 Window info
 			$g_iJM_Spider_Run_Class							;	Class value depending in the AutoIt v3 Window info
 Global $IsByteError
-Global $NewSheetsCounter, $SheetsArr[]
+Global $NewSheetsCounter, $SheetsArr[100]
 
 ; Open log text file
 $sTextFile = FileOpen($sLogTextFile, $FO_READ)
@@ -109,7 +109,7 @@ If $IsByteError == 1 Then
     _JPL_jnknsCreatelogfile('Byte Error', $sTestSheetFile, 'Test : ByteError check...', 'Yes', "start")
 
     Sleep(10000)
-    _BE_RunIFSheet(_BE_GetXCellPath())
+    ;_BE_RunIFSheet(_BE_GetXCellPath())
     Sleep(10000)
     _JMI_jnknsCallDSpider()
     Sleep(3000)
@@ -451,7 +451,7 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
         ElseIf  $iSheet >= 41 And ($iWorksheets-$iRSCount)-1 == 4 Then ;IF Separated sheet needs additional countermeasure
             If StringInStr($aWorkSheetList[3][0],$aWorkSheetList[2][0])  Then
                 _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
-                _BE_RunIFSheet($xCellFile)
+                ;_BE_RunIFSheet($xCellFile)
             EndIf
         EndIf;==>;Check if Exceeds in  subfunction limit
         $sPreviousLoopSheet =$sCurrent ;Set value to current sheet in  loop

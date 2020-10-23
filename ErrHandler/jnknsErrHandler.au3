@@ -43,6 +43,7 @@ Global Const    $_CONSOLE_SCREEN_BUFFER_INFO = _
                         "short Bottom;" & _
                         "short dwMaximumWindowSizeX;" & _
                         "short dwMaximumWindowSizeY"
+Global $IsByteError                       
 ; ====================================================================﻿================================================
 
 ; #CURRENT# ============================================================================================================
