@@ -479,7 +479,7 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	$toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
 	Sleep(2000)
     ;ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
-    ControlSend($toolHwnd, "", "", "!ae{RIGHT}{DOWN}{P}")
+    ControlSend($toolHwnd, "", "", "!e{RIGHT}{DOWN}{P}")
 
     Sleep(2000)                                         ; Delay to get the class of the pop-up item
 
