@@ -27,7 +27,7 @@
 ; #GLOBAL VARIABLES#	=====================================================================================================
 Global              $g_sJEH_FixValue
 Global              $g_iJEH_FormClose, _
-                        $g_iJEH_PLError_Check
+                        $g_iJEH_PLError_Check, $testPathNew
 Global Const    $STD_INPUT_HANDLE = -10
 Global Const    $STD_OUTPUT_HANDLE = -11
 Global Const    $STD_ERROR_HANDLE = -12
@@ -43,7 +43,7 @@ Global Const    $_CONSOLE_SCREEN_BUFFER_INFO = _
                         "short Bottom;" & _
                         "short dwMaximumWindowSizeX;" & _
                         "short dwMaximumWindowSizeY"
-Global $IsByteError                       
+Global $IsByteError
 ; ====================================================================﻿================================================
 
 ; #CURRENT# ============================================================================================================
@@ -593,32 +593,45 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 	$toolHwnd = WinGetHandle($g_sJMI_Spider_Version)
     Sleep(2000)
 
-
-
     ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
+
     if $IsByteError = 1 Then
+	   Local $revSheets = ""
+
         for $i = 0 to $NewSheetsCounter
-            ClipPut($SheetsArr[$i])
+			if $SheetsArr[$i] <> "" Then
+			   $revSheets = $revSheets & '"' & $SheetsArr[$i] &'" '
+			EndIf
+
+		 next
+
+
 
             ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
             ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
             Sleep(2000)                                         ; Delay to get the class of the pop-up item
-        
+
             $tprjHwnd = WinGetHandle("テストブックを選択")
             $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
+			ControlFocus($tprjHwnd,"",$sTextClasses[14][0])
+			ControlSend($tprjHwnd, "", $sTextClasses[14][0], "{SPACE}")
+			 Sleep(200)
 
-            ControlSend($tprjHwnd, "", "", "^v")
+			ClipPut($revSheets)
+			ControlFocus($tprjHwnd,"",$sTextClasses[8][0])
+
+		 ;_ArrayDisplay($sTextClasses)
+            ControlSend($tprjHwnd, "", "Edit1", "^v")
             ControlSend($tprjHwnd, "", "", "{ENTER}")
             Sleep(200)
             ControlSend($toolHwnd,"","","^s")
-        next
     Else
         ClipPut($g_sJMI_TestDesign_File)
 
         ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
         ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
         Sleep(2000)                                         ; Delay to get the class of the pop-up item
-    
+
         $tprjHwnd = WinGetHandle("テストブックを選択")
         $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
 

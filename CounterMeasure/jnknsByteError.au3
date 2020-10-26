@@ -50,6 +50,7 @@ Local	$iBackUpResult, _
             $spiderHwnd
 
 Global  $g_JPL_txtfile = @ScriptDir & '\..\TraceLog\jenkins-trace-log.txt'
+Global $testPathNew
 Global Enum $HAN_GUI, $HAN_TREE, $HAN_BTN, $HAN_BTN2, $HAN_COUNT
 Global		$g_iJM_Handles[$HAN_COUNT], _
 			$g_iJM_Spider_F5_Class , _							;	Class value depending in the AutoIt v3 Window info
@@ -114,18 +115,19 @@ If $IsByteError == 1 Then
     _JMI_jnknsCallDSpider()
     Sleep(3000)
     _JPL_jnknsCreatelogfile('Byte Error', "", 'Test : Separating Sheet', 'Yes', "= Passed")
-    ;_JEH_RefreshSettings($sSpider_Path  & '\')
+    _JEH_RefreshSettings($sSpider_Path  & '\')
     ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
     ;Send("{F5}")
     Sleep(10000)
     ;$sSpider_Local = WinActivate($sSpider_Run_Class)
-    $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
+#cs    $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
 	While 1
 		$spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
         if $spiderLocalHwnd <> '0x00000000'  Then
             ExitLoop
         EndIf
     WEnd
+	#ce
     _JPL_jnknsCreatelogfile('Byte Error', "", 'Exiting countermeasure', 'Yes', 'End')
 EndIf
 FileClose($sTextFile)
@@ -269,10 +271,15 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     Local $oNewWB
     Local $oNewWBhandler
 
-    $oExcel=_Excel_Open()
+    $oExcel=_Excel_Open(Default, Default, Default, Default, True)
     $oBook = _Excel_BookNew( $oExcel)
     $oftestDesign = _Excel_BookOpen ( $oExcel, $ftestDesign )
-	$ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+	$ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+	if $ifcToolHwnd <> '0x00000000' Then
+	   Else
+	  $ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+	  $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+	  EndIf
 
     If StringInStr($fTestDesign, "Rev") Then ;Check String File as validation for Revision String
         If StringInStr($fTestDesign,"No.") Then
@@ -323,17 +330,20 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     _PathSplit($fNewSheet, $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext)
 
     ; Get Window handler of the new workbook and IFC tool
+	$testPathNew = $oNewWBdrive & $oNewWBdir
 	$oNewWBhandler = WinGetHandle($oNewWBfname)
-    $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+    $SheetsArr[$NewSheetsCounter] = $oNewWBfname & $oNewWBext
+    $NewSheetsCounter = $NewSheetsCounter + 1
 
     ; call MACRO
     ControlSend($oNewWBhandler,"","","^+s")
-
+   Sleep(10000)
     ; Close all excel instance
 	_Excel_BookClose ( $oftestDesign, False )
 	_Excel_BookClose ( @ScriptDir & "\Tools\UT Step1 - IFC Tool.xlsm" , False )
-    _Excel_BookClose ( $fNewSheet )
-    _Excel_Close($oExcel)
+    _Excel_BookClose ( $fNewSheet, True)
+    _Excel_Close($oExcel, Default, True)
+    Sleep(2000)
 
     If $sheetindex >=3 Then
         _BE_jnkns_SheetDelete($ftestDesign,$sheetindex )
@@ -342,8 +352,7 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
         _BE_jnkns_SheetDelete($ftestDesign,$sheetindex2 )
     EndIf
 
-    $SheetsArr[$NewSheetsCounter] = $fNewSheet
-    $NewSheetsCounter = $NewSheetsCounter + 1
+
 EndFunc;==>  ; Separate sheet which exceeds subfunction call
 
 ; #INTERNAL_USE_ONLY# ================================================================================================
@@ -634,11 +643,19 @@ Func _BE_RunIFSheet($xCellFile)
             $sDir = "", _
             $sFileName = "", _
             $sExtension = ""
-    Local  $aPathSplit
+    Local  $aPathSplit, $ifcToolHwnd, $ifcToolObook
 
     $oExcel=_Excel_Open(True)
 
-    $fIFSheet = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+		$ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+	if $ifcToolHwnd <> '0x00000000' Then
+	   Else
+	  $ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+	  $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+   EndIf
+
+
+    ;$fIFSheet = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
     Sleep(7000)
     $fTestDesign = _Excel_BookOpen ( $oExcel,$xCellFile )
     $aPathSplit = _PathSplit($xCellFile, $sDrive, $sDir, $sFileName, $sExtension)
