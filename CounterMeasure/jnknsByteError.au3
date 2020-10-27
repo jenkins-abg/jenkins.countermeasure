@@ -98,7 +98,6 @@ if _JMI_jnknsBuildTree($sTextClasses) Then
 EndIf
 
 Sleep(300)
-
 _JEH_RefreshSettings($sSpider_Path & '\')
 ;Send("{F5}")
 ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
@@ -116,23 +115,19 @@ If $IsByteError == 1 Then
     Sleep(3000)
     _JPL_jnknsCreatelogfile('Byte Error', "", 'Test : Separating Sheet', 'Yes', "= Passed")
     _JEH_RefreshSettings($sSpider_Path  & '\')
-    ;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
-    ;Send("{F5}")
+    _JMI_jnknsPressF5($g_sJMI_Spider_Version)
     Sleep(10000)
-    ;$sSpider_Local = WinActivate($sSpider_Run_Class)
-#cs    $spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
-	While 1
-		$spiderLocalHwnd = WinGetHandle($sSpider_Run_Class)
-        if $spiderLocalHwnd <> '0x00000000'  Then
-            ExitLoop
-        EndIf
-    WEnd
-	#ce
     _JPL_jnknsCreatelogfile('Byte Error', "", 'Exiting countermeasure', 'Yes', 'End')
 EndIf
 FileClose($sTextFile)
 Exit
 
+; #INTERNAL_USE_ONLY# ================================================================================================
+; Name...........: checkError
+; Description ...: Chek memory error
+; Author/s ........: rdbayanado
+; Remarks .......:
+; ====================================================================================================================
 Func checkError()
     Local $sLogfile
     Local $hTextFile
@@ -277,10 +272,10 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
 	$ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
 	$testDeisgnHwnd = WinGetHandle($ftestDesign)
 	if $ifcToolHwnd <> '0x00000000' Then
-	   Else
-	  $ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
-	  $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
-	  EndIf
+	Else
+        $ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+        $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+	EndIf
 
     If StringInStr($fTestDesign, "Rev") Then ;Check String File as validation for Revision String
         If StringInStr($fTestDesign,"No.") Then
@@ -306,7 +301,6 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
         EndIf
         $sStringAppend2=StringTrimLeft($FtestDesign,$sStringCount); Set value of string 2 to concatenated string
         $fNewSheet= $sStringAppend1&"_"&"No."&$iSheetnum& $sStringAppend2
-
     EndIf ;===>  ;Check String File as validation for Revision String
 
     ; Create new workbook, save and close it
@@ -327,8 +321,6 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     _Excel_SheetCopyMove ( $oftestDesign, 1, $oNewWB, 1, True )
     _Excel_SheetDelete ( $oNewWB, "Sheet1" )
 
-	;$fNewSheet.Theme.ThemeColorScheme.Load ("C:\Program Files (x86)\Microsoft Office\Document Themes 16\Theme Colors\Office 2007 - 2010.xml")
-
     ; Get the file name of the new workbook
     _PathSplit($fNewSheet, $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext)
 
@@ -340,14 +332,12 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
 
     ; call MACRO
     ControlSend($oNewWBhandler,"","","^+s")
-   Sleep(10000)
+    Sleep(10000)
 
     ; Close all excel instance
 	_Excel_BookClose ( $oftestDesign, False )
 	_Excel_BookClose ( @ScriptDir & "\Tools\UT Step1 - IFC Tool.xlsm" , False )
     _Excel_BookClose ( $fNewSheet, True)
-
-
 
     _Excel_Close($oExcel, Default, True)
     Sleep(2000)
@@ -358,7 +348,6 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     If $sheetindex2 >=3 Then
         _BE_jnkns_SheetDelete($ftestDesign,$sheetindex2 )
     EndIf
-
 
 EndFunc;==>  ; Separate sheet which exceeds subfunction call
 
@@ -656,11 +645,10 @@ Func _BE_RunIFSheet($xCellFile)
 
 		$ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
 	if $ifcToolHwnd <> '0x00000000' Then
-	   Else
-	  $ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
-	  $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
-   EndIf
-
+	Else
+        $ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+        $ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+    EndIf
 
     ;$fIFSheet = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
     Sleep(7000)

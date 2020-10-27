@@ -251,15 +251,6 @@ endFunc		;==>_JMI_jnknsCallDSpider
 ; Author				:	prdedumo
 ; Modified			:	None
 ;=====================================================================================================================
-#comments-start
-	Func _JMI_jnknsSpiderSettings(ByRef $sSpiderTitle)
-	Local $sSpider_class_filename = $g_iJM_Spider_Software_Path_Class					;	Class value depending in the AutoIt v3 Window info
-    $g_sJMI_TPRJ_Path = ControlGetText($sSpiderTitle,"", $sSpider_class_filename)
-	Return 1
-EndFunc		;==>_JMI_jnknsSpiderSettings
-
-#comments-end
-
 Func _JMI_jnknsSpiderSettings()
 	Local   $sLogTextFile = "C:\work\Jenkins\automation-jenkins\Log.txt"
 	Local   $hTextFile = FileOpen($sLogTextFile, $FO_READ)
@@ -283,9 +274,6 @@ Func _JMI_jnknsSpiderSettings()
 	Return 1
 EndFunc		;==>_JMI_jnknsSpiderSetting
 
-
-
-
 ; #FUNCTION# =========================================================================================================
 ; Name					:	_JMI_jnknsPressF5
 ; Description		:	Launches the test design in the DSpider
@@ -297,13 +285,11 @@ EndFunc		;==>_JMI_jnknsSpiderSetting
 ; Modified			:	None
 ;=====================================================================================================================
 Func _JMI_jnknsPressF5($sSpiderTitle)
-	Local	$sSpider_F5_Class = $g_iJM_Spider_F5_Class, _												;	Class value depending in the AutoIt v3 Window info
-				$sSpider_File_Class = $g_iJM_Spider_File_Class, _											;	Class value depending in the AutoIt v3 Window info
+	Local	$sSpider_F5_Class = $g_iJM_Spider_F5_Class, _												;	Class value depending in the AutoIt v3 Window info										;	Class value depending in the AutoIt v3 Window info
 				$sSpider_Software_Path_Class = $g_iJM_Spider_Software_Path_Class, _		;	Class value depending in the AutoIt v3 Window info
 				$sSpider_Run_Class = "テスト実行中", _															;	Class value depending in the AutoIt v3 Window info
 				$sSpider_Path = "", _																						;	Setting initial value to null
-				$sSpider_Software_Path = "", _																		;	Setting initial value to null
-				$sSSpider_Local = "", _																					;	Setting initial value to null
+				$sSpider_Software_Path = "", _																		;	Setting initial value to null																				;	Setting initial value to null
 				$sSpider_Log_TxtFile = "", _																				;	Setting initial value to null
 				$sUnitTest_Log_TxtFile = ""
 	Local	$iReturnF5
@@ -316,54 +302,21 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	$sSpider_Log_TxtFile = @ScriptDir & '\Log.txt'
 	$hTestToolHandler = WinGetHandle($sSpiderTitle)
 	
-	; Copy the test Design File
-	;ClipPut($g_sJMI_TestDesign_File)
-	; Send Keys
-	;Send("{ALT}")
-	;Send("{F}")
-	;Send("{T}")
-	;ControlSend($hTestToolHandler, "", "&F", "{T}")
-	;ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
-	; Wait for 1 second
-	;Sleep(2000)
-	;WinWait("","",1)
-	; Pastes the copied test design file path
-	;Send("^v")
-	;Send("{ENTER}")
-
-	;Local $tprjHwnd = WinGetHandle("テストブックを選択")
-	;$sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
-	;ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
-	;ControlSend($tprjHwnd, "", "^v")
-	;ControlSend($tprjHwnd, "", "{ENTER}")
-	;Sleep(500)
-	;WinWait("","",5)
-	; Save the configuration of the DSpider
-	;Send("^s")
-	;ControlSend($tprjHwnd, "", "^s")
+	; Delay 5 secs
 	Sleep(5000)
-	;WinWait("","",5)
 	; Presses F5 in the DSpider Tool
 	ControlClick($sSpiderTitle,"",$sSpider_F5_Class)
+	; Delay 5 secs
 	Sleep(5000)
-	;WinWait("","",10)
 	While (1)
 		if WinExists($sSpider_Run_Class) Then
 			ExitLoop
 		EndIf
 	WEnd
-
-	;$sSpider_Local = WinActivate($sSpider_Run_Class)
 	$sSpider_Local = WinGetHandle($sSpider_Run_Class)
 	; Loop to wait until running of the tool is done
 	While 1
-		;$sSpider_Local = WinActivate($sSpider_Run_Class)
 		$sSpider_Local = WinExists($sSpider_Run_Class,"") ;edited by ryan
-;~             If _JPE_jnknsErrorLogger($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile) Then
-;~                 _JEH_jnknsCheckErrHandler($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile)
-;~                 $g_iJEH_PLError_Check = 1
-;~                 ExitLoop
-;~             EndIf
             if $sSpider_Local <> 0 Then
             Else
                 ExitLoop
@@ -372,11 +325,6 @@ Func _JMI_jnknsPressF5($sSpiderTitle)
 	Sleep(2000)
     If $g_iJEH_PLError_Check = 1 Then
         $iReturnF5 = 1
-;~         While 1
-;~             If _JPE_jnknsErrorLogger() Then
-;~                 ExitLoop
-;~             EndIf
-;~         WEnd
     Else
         _JMI_jnknsReCheckIfError($sUnitTest_Log_TxtFile, $sSpider_Log_TxtFile)
     EndIf
@@ -416,36 +364,20 @@ Func _JMI_jnknsInitLog($sSpiderTitle)
 	$sSpider_Log_TxtFile = @ScriptDir & '\Log.txt'
 	$hTestToolHandler = WinGetHandle($sSpiderTitle)
 
-;~     Local $hWnd = WinWait($g_sJMI_Spider_Process)
-;~     Local $hControl = ControlGetHandle($hWnd, "", "Edit1")
 	; Copy the test Design File
 	ClipPut($g_sJMI_TestDesign_File)
     WinActivate($sSpiderTitle)
     ; Send Keys
-
     Sleep(200)
-    ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
-;~     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "{F}", 1)
-;~     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "{T}", 1)
-;~ 	Send("{ALT}")
-;~ 	Send("{F}")
-;~ 	Send("{T}")
+	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "!aft")
 	; Wait for 1 second
-;~ 	WinWait("","",1)
+	Sleep(1000)
 	; Pastes the copied test design file path
-;~     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "^v", 1)
-;~     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "{ENTER}", 0)
 	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "^v")
 	ControlSend($sSpiderTitle, "", $sSpider_File_Class, "{ENTER}")
-	;Send("^v")
-	;Send("{ENTER}")
-;~ 	WinWait("","",5)
 	; Save the configuration of the DSpider
     ControlSend($sSpiderTitle, "", $sSpider_File_Class, "^s", 0)
-	;Send("^s")
-;~ 	WinWait("","",5)
-
-;~     Sleep(2000)
+    Sleep(2000)
     _JEH_jnknsCreateLogFile("0", "Starting", $sSpider_Log_TxtFile)
 EndFunc		;==>_JMI_jnknsInitLog
 

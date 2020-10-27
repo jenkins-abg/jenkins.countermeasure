@@ -567,7 +567,6 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
     If $sComment_Result <> "" Then
         ; Get Cmment_result From TestSheet
-
 		ControlSend($toolHwnd, "", "", "!ae{RIGHT}{DOWN}{A}")
 
         Sleep(2000)
@@ -596,37 +595,28 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
     ControlFocus($tprjHwnd, "", $sTextClasses[8][0])   ; Set focus on the tprj input bar
 
     if $IsByteError = 1 Then
-	   Local $revSheets = ""
-	   Local $oExcel=_Excel_Open()
+        Local $revSheets = ""
+        Local $oExcel=_Excel_Open()
+        Local $ifcTool = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+        Local $oftestDesign = _Excel_BookOpen ( $oExcel, $g_sJMI_TestDesign_File )
+        Local $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext
+        _PathSplit($g_sJMI_TestDesign_File, $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext)
 
+        Local $handler = WinGetHandle($oNewWBfname)
+        ControlSend($handler,"","","^+s")
+        Sleep(15000)
 
-	 Local $ifcTool = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
-	 Local $oftestDesign = _Excel_BookOpen ( $oExcel, $g_sJMI_TestDesign_File )
+        _Excel_BookClose ( @ScriptDir & "\Tools\UT Step1 - IFC Tool.xlsm" , False  )
+        _Excel_Close($oExcel, Default, True)
+        _Excel_BookClose ( $oftestDesign, True )
+        Sleep(2000)
 
-	Local $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext
-	_PathSplit($g_sJMI_TestDesign_File, $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext)
-
-	Local $handler = WinGetHandle($oNewWBfname)
-	ControlSend($handler,"","","^+s")
-   Sleep(15000)
-
-   _Excel_BookClose ( @ScriptDir & "\Tools\UT Step1 - IFC Tool.xlsm" , False  )
-	  _Excel_Close($oExcel, Default, True)
-   _Excel_BookClose ( $oftestDesign, True )
-
-
- Sleep(2000)
-
-	  $revSheets = '"' & $oNewWBfname & $oNewWBext & '" '
-        for $i = 0 to $NewSheetsCounter
-			if $SheetsArr[$i] <> "" Then
-			   $revSheets = $revSheets & ' "' & $SheetsArr[$i] &'" '
-			EndIf
-
-		 next
-
-
-
+        $revSheets = '"' & $oNewWBfname & $oNewWBext & '" '
+            for $i = 0 to $NewSheetsCounter
+                if $SheetsArr[$i] <> "" Then
+                    $revSheets = $revSheets & ' "' & $SheetsArr[$i] &'" '
+                EndIf
+            next
 
             ControlFocus($toolHwnd, "", $sTextClasses[3][1])    ; Set focus on the status bar class
             ControlSend($toolHwnd, "", "", "!ft")               ; Click alt + f + o
@@ -636,12 +626,11 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
             $sTextClasses = _JMI_jnknsWinGetClassesByText(WinGetHandle("テストブックを選択"))
 			ControlFocus($tprjHwnd,"",$sTextClasses[14][0])
 			ControlSend($tprjHwnd, "", $sTextClasses[14][0], "{SPACE}")
-			 Sleep(200)
+			Sleep(200)
 
 			ClipPut($revSheets)
 			ControlFocus($tprjHwnd,"",$sTextClasses[8][0])
 
-		 ;_ArrayDisplay($sTextClasses)
             ControlSend($tprjHwnd, "", "Edit1", "^v")
             ControlSend($tprjHwnd, "", "", "{ENTER}")
             Sleep(200)
