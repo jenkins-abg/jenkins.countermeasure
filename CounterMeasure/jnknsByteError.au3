@@ -100,7 +100,7 @@ EndIf
 Sleep(300)
 _JEH_RefreshSettings($sSpider_Path & '\')
 ;Send("{F5}")
-;_JMI_jnknsPressF5($g_sJMI_Spider_Version)
+_JMI_jnknsPressF5($g_sJMI_Spider_Version)
 
 Sleep(3000)
 checkError()
