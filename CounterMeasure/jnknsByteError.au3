@@ -110,7 +110,7 @@ If $IsByteError == 1 Then
     _JPL_jnknsCreatelogfile('Byte Error', $sTestSheetFile, 'Test : ByteError check...', 'Yes', "start")
 
     Sleep(10000)
-    ;_BE_RunIFSheet(_BE_GetXCellPath())
+    _BE_RunIFSheet(_BE_GetXCellPath())
     Sleep(10000)
     _JMI_jnknsCallDSpider()
     Sleep(3000)
@@ -269,12 +269,13 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     Local $ifcToolHwnd, $ifcToolObook
 	Local $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext
     Local $oNewWB
-    Local $oNewWBhandler
+    Local $oNewWBhandler, $testDeisgnHwnd
 
-    $oExcel=_Excel_Open(Default, Default, Default, Default, True)
+    $oExcel=_Excel_Open()
     $oBook = _Excel_BookNew( $oExcel)
     $oftestDesign = _Excel_BookOpen ( $oExcel, $ftestDesign )
 	$ifcToolHwnd = WinGetHandle("UT Step1 - IFC Tool.xlsm")
+	$testDeisgnHwnd = WinGetHandle($ftestDesign)
 	if $ifcToolHwnd <> '0x00000000' Then
 	   Else
 	  $ifcToolObook = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
@@ -326,6 +327,8 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     _Excel_SheetCopyMove ( $oftestDesign, 1, $oNewWB, 1, True )
     _Excel_SheetDelete ( $oNewWB, "Sheet1" )
 
+	;$fNewSheet.Theme.ThemeColorScheme.Load ("C:\Program Files (x86)\Microsoft Office\Document Themes 16\Theme Colors\Office 2007 - 2010.xml")
+
     ; Get the file name of the new workbook
     _PathSplit($fNewSheet, $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext)
 
@@ -338,10 +341,14 @@ Func _BE_jnknsSeparateSheet( $ftestDesign,$sheetindex,$sheetindex2,$aArraySheets
     ; call MACRO
     ControlSend($oNewWBhandler,"","","^+s")
    Sleep(10000)
+
     ; Close all excel instance
 	_Excel_BookClose ( $oftestDesign, False )
 	_Excel_BookClose ( @ScriptDir & "\Tools\UT Step1 - IFC Tool.xlsm" , False )
     _Excel_BookClose ( $fNewSheet, True)
+
+
+
     _Excel_Close($oExcel, Default, True)
     Sleep(2000)
 
@@ -460,7 +467,7 @@ Func _BE_jnknsMain($xCellFile);Decides whether the sheet needs to be separated o
         ElseIf  $iSheet >= 41 And ($iWorksheets-$iRSCount)-1 == 4 Then ;IF Separated sheet needs additional countermeasure
             If StringInStr($aWorkSheetList[3][0],$aWorkSheetList[2][0])  Then
                 _BE_jnknsSeparateSheet($xCellFile,0,$i,$aWorkSheetList, $iLoopCount+1)
-                ;_BE_RunIFSheet($xCellFile)
+                _BE_RunIFSheet($xCellFile)
             EndIf
         EndIf;==>;Check if Exceeds in  subfunction limit
         $sPreviousLoopSheet =$sCurrent ;Set value to current sheet in  loop

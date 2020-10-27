@@ -597,13 +597,34 @@ Func _JEH_RefreshSettings($sSoftwarePath, $sStartUpAddress = "", $sComment_Resul
 
     if $IsByteError = 1 Then
 	   Local $revSheets = ""
+	   Local $oExcel=_Excel_Open()
 
+
+	 Local $ifcTool = _Excel_BookOpen ( $oExcel, @ScriptDir&"\Tools\UT Step1 - IFC Tool.xlsm" )
+	 Local $oftestDesign = _Excel_BookOpen ( $oExcel, $g_sJMI_TestDesign_File )
+
+	Local $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext
+	_PathSplit($g_sJMI_TestDesign_File, $oNewWBdrive, $oNewWBdir, $oNewWBfname, $oNewWBext)
+
+	Local $handler = WinGetHandle($oNewWBfname)
+	ControlSend($handler,"","","^+s")
+   Sleep(15000)
+
+   _Excel_BookClose ( @ScriptDir & "\Tools\UT Step1 - IFC Tool.xlsm" , False  )
+	  _Excel_Close($oExcel, Default, True)
+   _Excel_BookClose ( $oftestDesign, True )
+
+
+ Sleep(2000)
+
+	  $revSheets = '"' & $oNewWBfname & $oNewWBext & '" '
         for $i = 0 to $NewSheetsCounter
 			if $SheetsArr[$i] <> "" Then
-			   $revSheets = $revSheets & '"' & $SheetsArr[$i] &'" '
+			   $revSheets = $revSheets & ' "' & $SheetsArr[$i] &'" '
 			EndIf
 
 		 next
+
 
 
 
