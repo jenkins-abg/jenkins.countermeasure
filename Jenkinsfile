@@ -23,21 +23,22 @@ node("${slaveName}") {
     def myParentFolder =  ""
     def myLocalIP = ""
     echo "copying to workspace... ${file_in_workspace}" 
+    //Checking for settings if user selected a file
+    if("${environmentName}" == ""){
+        echo "No environment selected..."
+        currentBuild.result = 'SUCCESS'
+        return
+    }else{
+        echo "executing pipeline..."
+    }
+
+    def environmentSplitter() {
+        def envName = readFile("${environmentName}")
+        return envName        
+    }
 }
 
-//Checking for settings if user selected a file
-if("${environmentName}" == ""){
-    echo "No environment selected..."
-    currentBuild.result = 'SUCCESS'
-    return
-}else{
-    echo "executing pipeline..."
-}
 
-def environmentSplitter() {
-    def envName = readFile("${environmentName}")
-    return envName        
-}
 
 pipeline {
     
@@ -250,7 +251,7 @@ pipeline {
             }
             steps {
                 build job: '_jenkins_CopyLog', parameters:([
-                        [$class: 'StringParameterValue', name: 'mySlave', value: "${slaveName}"],
+                        [$class: 'LabelParameterValue', name: 'mySlave', label: "${slaveName}"],
                         [$class: 'StringParameterValue', name: 'myLocalIP', value: "${_myArrayName[9]}"],
                         [$class: 'StringParameterValue', name: 'myTestSheet', value: "${_myArrayName[3]}"],
                         [$class: 'StringParameterValue', name: 'myTestSheetParentFolder', value: "${_myArrayName[1]}"],
@@ -267,7 +268,7 @@ pipeline {
             }
             steps {
                 build job: '_jenkins_CopyRemoteToLocal', parameters:([
-                        [$class: 'StringParameterValue', name: 'mySlave', value: "${slaveName}"],
+                        [$class: 'LabelParameterValue', name: 'mySlave', label: "${slaveName}"],
                         [$class: 'StringParameterValue', name: 'myLocalIP', value: "${_myArrayName[9]}"],
                         [$class: 'StringParameterValue', name: 'myTestSheet', value: "${_myArrayName[3]}"],
                         [$class: 'StringParameterValue', name: 'myTestSheetParentFolder', value: "${_myArrayName[1]}"],
