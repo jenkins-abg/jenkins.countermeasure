@@ -91,6 +91,9 @@ pipeline {
                     label "${slaveName}"
                 }
             }
+            options {
+                timeout(time: 2, unit: "MINUTES")
+            }
             steps {
                 echo "${slaveName}"
                 build job: '_jenkins_ClearDataInit', parameters:([
@@ -123,6 +126,9 @@ pipeline {
                     label "${slaveName}"
                 }
             }
+            options {
+                timeout(time: 2, unit: "MINUTES")
+            }
             steps {
                 build job: '_jenkins_Main', parameters:([
                     [$class: 'LabelParameterValue', name: 'node', label: "${slaveName}"]
@@ -135,6 +141,9 @@ pipeline {
                 node {
                     label "${slaveName}"
                 }
+            }
+            options {
+                timeout(time: 2, unit: "MINUTES")
             }
             steps {
                 build job: '_jenkins_CounterMeasure_StartUpAddress', parameters:([
@@ -149,6 +158,9 @@ pipeline {
                     label "${slaveName}"
                 }
             }
+            options {
+                timeout(time: 2, unit: "MINUTES")
+            }
             steps {
                 build job: '_jenkins_CounterMeasure_PLError', parameters:([
                         [$class: 'LabelParameterValue', name: 'node', label: "${slaveName}"]
@@ -160,6 +172,9 @@ pipeline {
                 node {
                     label "${slaveName}"
                 }
+            }
+            options {
+                timeout(time: 2, unit: "MINUTES")
             }
             steps {
                 build job: '_jenkins_CounterMeasure_CommentResultError', parameters:([
