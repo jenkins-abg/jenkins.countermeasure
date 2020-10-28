@@ -31,17 +31,16 @@ node("${slaveName}") {
     }else{
         echo "executing pipeline..."
     }
+}
 
-    def environmentSplitter() {
-        def envName = readFile("${environmentName}")
-        return envName        
-    }
+def environmentSplitter() {
+    def envName = readFile("${environmentName}")
+    return envName        
 }
 
 
-
 pipeline {
-    
+
     environment {
         FILENAME = environmentSplitter()
         FILELOG = fileExists (relPath + '/Log.txt')
